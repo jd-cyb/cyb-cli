@@ -13,7 +13,6 @@
 
 const path = require('path')
 const fontMin = require('gulp-fez-fontmin')
-const ttf2woff2 = require('gulp-ttf2woff2')
 const fancyLog = require('fancy-log')
 const chalk = require('chalk')
 const filter = require('gulp-filter')
@@ -40,7 +39,6 @@ const minFonts = (answers) => {
       quiet: true,
       fontPath: '../fonts/'
     }))
-    .pipe(ttf2woff2({ clone: true }))
     .pipe(cssFilter)
     .pipe(rename({ extname: `.${answers.style}` }))
     .pipe(cssFilter.restore)
