@@ -2,10 +2,13 @@
   <a href="http://cyb.jd.com" target="_blank">
     <img width="200" src="./.cyb/lib/cyb-logo.svg">
   </a>
-
+  <br>
+  <br>
+  <img src="https://img.shields.io/npm/v/cyb-cli.svg" alt="npm-version">
+  <img src="https://img.shields.io/badge/node-%3E=6.11.5-brightgreen.svg" alt="node">
+  <img src="https://img.shields.io/npm/l/cyb-cli.svg" alt="license">
+  <img src="https://img.shields.io/badge/platform-MacOS%7CLinux%7CWindow-lightgrey.svg" alt="platform">
 </p>
-
-![npm](https://img.shields.io/npm/v/cyb-cli.svg) ![](https://img.shields.io/badge/node-%3E=6.11.5-brightgreen.svg) ![npm](https://img.shields.io/npm/l/cyb-cli.svg) ![](https://img.shields.io/badge/platform-MacOS%7CLinux%7CWindow-lightgrey.svg)
 
 # 塞伯坦（Cybertron）- CYB
 [CYB](http://cyb.jd.com) 是面向前端模块化工程的构建工具。主要目的是帮助开发者统一前端开发模式和项目开发结构，提高功能扩展和降低维护成本，自动化前端工作流，提高开发效率和开发质量。
@@ -256,6 +259,6 @@ npm update cyb-cli -g
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2018, 商城前台产品研发部-CYB前端小组
+Copyright (c) 2018, 京东商城-基础平台研发部-CYB前端小组
 
 
