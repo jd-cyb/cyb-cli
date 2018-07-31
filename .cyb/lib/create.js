@@ -103,7 +103,9 @@ const metalsmithFilters = () => {
     const metalsmithMetadata = metalsmith.metadata()
     const fileNames = Object.keys(files)
     for (let item of metalsmithMetadata.delateFiles) {
+      item = item.replace(/\/|\\/g, path.sep) //兼容window
       fileNames.forEach(file => {
+        file = file.replace(/\/|\\/g, path.sep) //兼容window
         if (file.indexOf(item) > -1) {
           delete files[file]
         }
