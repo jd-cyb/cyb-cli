@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+
+const fancyLog = require('fancy-log')
+const chalk = require('chalk')
+const program = require('commander')
+
+console.log("---------------------------------------")
+console.log(chalk.cyan("* 欢迎使用 CYB 前端模块化工程构建工具 *"))
+console.log("---------------------------------------")
+
+program
+  .version(require('../package').version)
+  .usage('<command> [options]')
+  .command('init', '创建新项目')
+  .command('page', '创建新页面')
+  // .command('model', '技术选型')
+  .command('dev', '研发环境')
+  .command('dist', '生产发布')
+  .command('test', '本地测试dist目录')
+  .command('zip', '打包压缩dist目录')
+  .command('sftp', 'SSH上线部署或部署静态资源')
+  .command('fontmin', '特殊字体解决方案')
+  .command('imagemin', '图片深度无损压缩解决方案')
+  .parse(process.argv)

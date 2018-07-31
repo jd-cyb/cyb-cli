@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+const fs = require('fs')
+const path = require('path')
+const chalk = require('chalk')
+
+const zip = require('../.cyb/zip')
+
+const checkFezConfigFile = fs.existsSync(path.join(process.cwd(), './fez.config.js'))
+const checkCybConfigFile = fs.existsSync(path.join(process.cwd(), './cyb.config.js'))
+
+if (checkFezConfigFile || checkCybConfigFile) {
+  program
+    .description('生产发布')
+    .parse(process.argv)
+
+  zip()
+} else {
+  console.log(chalk.red('请在项目根目录下执行 zip 命令'))
+}

@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+const fs = require('fs')
+const path = require('path')
+const chalk = require('chalk')
+
+const page = require('../.cyb/page')
+
+const checkFezConfigFile = fs.existsSync(path.join(process.cwd(), './fez.config.js'))
+const checkCybConfigFile = fs.existsSync(path.join(process.cwd(), './cyb.config.js'))
+
+if (checkFezConfigFile || checkCybConfigFile) {
+  program
+    .description('创建新项目')
+    .parse(process.argv)
+
+  page()
+} else {
+  console.log(chalk.red('请在项目根目录下执行 page 命令'))
+}

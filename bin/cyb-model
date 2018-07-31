@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+
+const model = require('../.cyb/model')
+
+program
+  .description('技术选型')
+  .parse(process.argv)
+
+model()

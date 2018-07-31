@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+const program = require('commander')
+const fs = require('fs')
+const path = require('path')
+const chalk = require('chalk')
+
+const dist = require('../.cyb/dist')
+
+const checkFezConfigFile = fs.existsSync(path.join(process.cwd(), './fez.config.js'))
+const checkCybConfigFile = fs.existsSync(path.join(process.cwd(), './cyb.config.js'))
+
+if (checkFezConfigFile || checkCybConfigFile) {
+  program
+    .description('进入研发环境')
+    .parse(process.argv)
+
+  dist()
+} else {
+  console.log(chalk.red('请在项目根目录下执行 dist 命令'))
+}
