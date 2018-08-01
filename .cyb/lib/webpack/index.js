@@ -40,7 +40,7 @@ module.exports = {
           glob(path.join(process.cwd(), config.paths.src.appJs, '*/index.js'), (error, files) => {
             //获取所有JS入口
             files.map((file) => {
-              const source_name = path.dirname(file).split(path.sep).pop()
+              const source_name = path.dirname(file).split('/').pop()
               webpackConfig.entry[outputPath.js(source_name)] = ['webpack/hot/dev-server', 'webpack-hot-middleware/client?reload=true', file]
             })
 
@@ -108,7 +108,7 @@ module.exports = {
 
             //获取所有js入口
             files.map((file) => {
-              const source_name = path.dirname(file).split(path.sep).pop()
+              const source_name = path.dirname(file).split('/').pop()
               webpackConfig.entry[outputPath.js(source_name)] = file
             })
 
