@@ -121,7 +121,9 @@ CYB 支持使用ES6/ES7的标准特性开发jQuery项目，jQuery庞大生态圈
 - Ubuntu 用户使用 `apt-get` 安装 node 后，安装的程序名叫 `nodejs`，需要软链成 `node`。
 - Windows 用户安装完成后需要在 CMD 下确认是否能执行 node 和 npm。
 
-> CYB不能保证所有 window系统 下默认的 Nodejs 环境都能正常运行。可以尝试安装nodejs的[windows开发工具集](https://github.com/felixrieseberg/windows-build-tools)
+> window系统 若不能正常安装和运行CYB。请使用管理员身份先安装nodejs的[windows开发工具集](https://github.com/felixrieseberg/windows-build-tools)
+
+> 设置 `npm config set loglevel=http` 可以查看npm包的下载和安装进度。
 
 **2. 全局安装 CYB-CLI**
 
