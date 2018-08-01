@@ -133,6 +133,12 @@ CYB 支持使用ES6/ES7的标准特性开发jQuery项目，jQuery庞大生态圈
 npm install cyb-cli -g
 ```
 
+或者
+
+```
+yarn global add cyb-cli
+```
+
 ### 使用CYB工程框架
 
 **1. 新建项目**
@@ -141,7 +147,7 @@ npm install cyb-cli -g
 cyb init
 ```
 
-根据提示输入项目目录名，比如：demo-cyb，完成选择其它配置项。
+根据提示输入项目目录名，比如：demo-cyb，根据提示完成配置项。
 
 ```bash
 demo-cyb
