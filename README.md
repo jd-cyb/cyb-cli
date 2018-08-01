@@ -1,6 +1,6 @@
 <p align="center">
   <a href="http://cyb.jd.com" target="_blank">
-    <img width="200" src="./.cyb/lib/cyb-logo.svg">
+    <img width="200" src="./.cyb/lib/cyb-logo.png">
   </a>
   <br>
   <br>
