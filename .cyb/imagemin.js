@@ -24,7 +24,6 @@ const imageminGifsicle = require('imagemin-gifsicle')
 const async = require('async')
 const fancyLog = require('fancy-log')
 const chalk = require('chalk')
-const home = require('user-home')
 const inquirer = require('inquirer')
 const program = require('commander')
 const ora = require('ora')
@@ -34,10 +33,6 @@ function imageMinAll(answers) {
   fancyLog(chalk.magenta('Start imagemin...'))
 
   vfs.src(path.join(config.paths.src.img, '**/*.{png,jpg,jpeg,gif}'))
-    .pipe(gulpif(
-      answers.backup,
-      vfs.dest(path.join(home, 'imagemin-backup', config.projectName, config.paths.src.img))
-    ))
     .pipe(gulpCache(gulpImagemin([
       pngquant(config.imagemin.png),
       imageminMozjpeg(Object.assign(config.imagemin.jpg, {
@@ -127,11 +122,6 @@ module.exports = () => {
         name: 'optimizationLevel',
         message: '请填写Gif压缩质量：（1～3）',
         default: config.imagemin.gif.optimizationLevel
-      }, {
-        name: 'backup',
-        type: 'confirm',
-        message: '是否备份图片目录？',
-        default: false
       }])
       .then(answers => {
         imageMinAll(answers)
