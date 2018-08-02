@@ -302,8 +302,8 @@ const fezConfigDefault = {
      * https://github.com/Hiswe/gulp-svg-symbols#options
      */
     options: {
-      id: 'fez-%f',
-      class: '.fez-%f'
+      id: '%f',
+      class: '.%f'
     }
   },
 
