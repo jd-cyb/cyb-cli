@@ -139,7 +139,7 @@ npm install cyb-cli -g
 yarn global add cyb-cli
 ```
 
-### 使用CYB工程框架
+### 使用CYB
 
 **1. 新建项目**
 
@@ -170,7 +170,7 @@ demo-cyb
 
 > CYB会帮助我们创建统一的项目结构，并且支持自行规划详细的模块级别的目录结构。创建项目会默认创建`index`页面。
 
-**2. 运行项目**
+**2. 运行及开发项目**
 
 进入 `demo-cyb` 项目目录 执行
 
@@ -252,6 +252,8 @@ cyb imagemin
 cyb sftp
 ```
 
+> 快速部署上线代码，根据配置的SSH服务器信息，读取dist目录中的所有代码，通过SFTP快速发布代码到线上服务器或测试服务器，可以配置仅部署静态资源到CDN服务器。
+
 ## CYB升级
 
 - **使用npm升级**
@@ -260,7 +262,6 @@ cyb sftp
 
 ```
 npm update cyb-cli -g
-
 ```
 
 ## License
