@@ -4,46 +4,53 @@
   </a>
   <br>
   <br>
+
   <img src="https://img.shields.io/npm/v/cyb-cli.svg" alt="npm-version">
+  <br>
+
+  <img src="https://img.shields.io/npm/dm/cyb-cli.svg" alt="download-num">
   <img src="https://img.shields.io/badge/node-%3E=6.11.5-brightgreen.svg" alt="node">
   <img src="https://img.shields.io/npm/l/cyb-cli.svg" alt="license">
   <img src="https://img.shields.io/badge/platform-MacOS%7CLinux%7CWindow-lightgrey.svg" alt="platform">
+  <br>
+
 </p>
 
-# 塞伯坦（Cybertron）- CYB
-[CYB](http://cyb.jd.com) 是面向前端模块化工程的构建工具。主要目的是帮助开发者统一前端开发模式和项目开发结构，提高功能扩展和降低维护成本，自动化前端工作流，提高开发效率和开发质量。
+<h1 align="center">塞伯坦（Cybertron）- CYB</h1>
+塞伯坦（[CYB](http://cyb.jd.com)）是面向前端模块化工程的构建工具。主要目的是帮助开发者统一前端开发模式和项目开发结构，提高功能扩展和降低维护成本，自动化前端工作流，提高开发效率和开发质量。
 
-## 安装和使用
+<h2 align="center">安装和使用</h2>
 
-- Mac系统推荐使用 [iterm2](http://iterm2.com/) 及 [oh my zsh](http://ohmyz.sh/)
+- Mac系统推荐使用 [iterm2](http://iterm2.com/) 及 [oh my zsh](http://ohmyz.sh/)。
 - 类 Unix 系统，请打开任意终端输入命令执行。
-- Windows 用户请先安装 [git](http://git-scm.com/)，然后在 [Git Bash](http://git-for-windows.github.io/) 下执行命令
+- Windows 用户请先安装 [git](http://git-scm.com/)，然后在 [Git Bash](http://git-for-windows.github.io/) 下执行命令。
 
 ### 安装
 
 **1. 安装 Node 和 NPM**
 
-- 详细过程参考官网 https://nodejs.org (中文网站 http://nodejs.cn/)
-- Node >= 6.11.5，建议使用最新稳定版(LTS)。
+- 官网下载安装Node: [https://nodejs.org](https://nodejs.org)。
+- 需要Node >= 6.11.5，建议使用最新稳定版(LTS)。
 - Ubuntu 用户使用 `apt-get` 安装 node 后，安装的程序名叫 `nodejs`，需要软链成 `node`。
 - Windows 用户安装完成后需要在 CMD 下确认是否能执行 node 和 npm。
 
-> window系统 若不能正常安装和运行CYB。请使用管理员身份先安装[windows-build-tools](https://github.com/felixrieseberg/windows-build-tools)；
 > 设置 `npm config set loglevel=http` 可以查看npm包的下载和安装进度。
 
 **2. 全局安装 CYB-CLI**
 
-任意目录执行
+使用npm安装
 
 ```bash
-npm install cyb-cli -g
+npm install -g cyb-cli
 ```
 
-或者
+使用yarn安装
 
 ```
 yarn global add cyb-cli
 ```
+
+> 某些window系统若不能正常安装CYB，请使用管理员身份先安装[windows-build-tools](https://github.com/felixrieseberg/windows-build-tools)。
 
 ### 使用
 
@@ -86,7 +93,7 @@ cyb dev
 
 > CYB 会自动打开默认浏览器进入研发环境，项目任意文件的更改都会自动更新浏览器页面，请尽情享用CYB为你带来高效、愉悦的开发体验！
 
-## 命令说明
+<h2 align="center">命令说明</h2>
 
 - **创建新项目**
 
@@ -160,21 +167,25 @@ cyb sftp
 
 > 快速部署上线代码，根据配置的SSH服务器信息，读取dist目录中的所有代码，通过SFTP快速发布代码到线上服务器或测试服务器，可以配置仅部署静态资源到CDN服务器。
 
-## 升级
+<h2 align="center">升级</h2>
 
 - **使用npm升级**
 
-任意目录执行
-
 ```
-npm update cyb-cli -g
+npm update -g cyb-cli
 ```
 
-## 相关说明及使用文档
+- **使用yarn升级**
+
+```
+yarn global upgrade cyb-cli
+```
+
+<h2 align="center">相关说明及使用文档</h2>
 
 WIKI:[https://github.com/jd-cyb/cyb-cli/wiki](https://github.com/jd-cyb/cyb-cli/wiki)
 
-## License
+<h2 align="center">License</h2>
 
 [MIT](http://opensource.org/licenses/MIT)
 
