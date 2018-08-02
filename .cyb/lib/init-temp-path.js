@@ -21,7 +21,7 @@ const downLoadGithub = () => {
         spinner.stop()
       } else {
         reject()
-        spinner.fail('下载失败，请检查网络是否连接！')
+        spinner.fail('下载失败，请检查网络是否连通！并重新执行命令。')
       }
     })
   })
@@ -43,7 +43,7 @@ const checkVersion = () => {
           reject()
         }
       } else {
-        fancyLog(chalk.red('获取信息失败，请检查网络是否连接！'))
+        fancyLog(chalk.red('获取信息失败，请检查网络是否连通！并重新执行命令。'))
       }
     })
   })
