@@ -12,7 +12,6 @@
   <img src="https://img.shields.io/npm/l/cyb-cli.svg" alt="license">
   <img src="https://img.shields.io/badge/platform-MacOS%7CLinux%7CWindow-lightgrey.svg" alt="platform">
   <br>
-  <br>
 </p>
 
 <h1 align="center">塞伯坦（Cybertron）- CYB</h1>
