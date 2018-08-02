@@ -15,6 +15,7 @@ const render = require('consolidate').handlebars.render
 const ora = require('ora')
 const chalk = require('chalk')
 const spawn = require('child_process').spawn
+const isWin = /^win/.test(process.platform)
 
 // register handlebars helper
 Handlebars.registerHelper('if_eq', function(a, b, opts) {
@@ -103,7 +104,9 @@ const metalsmithFilters = () => {
     const metalsmithMetadata = metalsmith.metadata()
     const fileNames = Object.keys(files)
     for (let item of metalsmithMetadata.delateFiles) {
-      item = item.replace(/\//g, path.sep) //兼容window
+      if (isWin) {
+        item = item.replace(/\//g, path.sep) //兼容window
+      }
       fileNames.forEach(file => {
         if (file.indexOf(item) > -1) {
           delete files[file]

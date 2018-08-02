@@ -20,6 +20,7 @@ const Client = require('ssh2').Client
 const async = require('async')
 const vfs = require('vinyl-fs')
 const config = require('./lib/fezconfig')
+const isWin = /^win/.test(process.platform)
 
 const uploader = (sftp, sftpConfig) => {
 
@@ -27,8 +28,13 @@ const uploader = (sftp, sftpConfig) => {
 
     const stats = fs.statSync(file.path)
 
+    let writeStreamPath = path.join(sftpConfig.remotePath, file.relative)
+    if (isWin) {
+      writeStreamPath = writeStreamPath.replace(/\\/g, '/')
+    }
+
     if (stats.isDirectory() && (stats.isDirectory() !== '.' || stats.isDirectory() !== '..')) {
-      sftp.mkdir(path.join(sftpConfig.remotePath, file.relative), { mode: '0755' }, function(err) {
+      sftp.mkdir(writeStreamPath, { mode: '0755' }, function(err) {
         if (!err) {
           fancyLog(chalk.yellow(`创建目录：${file.relative}`))
         }
@@ -36,7 +42,7 @@ const uploader = (sftp, sftpConfig) => {
       })
     } else {
       let readStream = fs.createReadStream(file.path)
-      let writeStream = sftp.createWriteStream(path.join(sftpConfig.remotePath, file.relative))
+      let writeStream = sftp.createWriteStream(writeStreamPath)
 
       writeStream.on('close', function() {
         fancyLog(chalk.green(`成功上传：${file.relative}`))
