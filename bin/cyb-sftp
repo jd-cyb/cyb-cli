@@ -12,7 +12,7 @@ const checkCybConfigFile = fs.existsSync(path.join(process.cwd(), './cyb.config.
 
 if (checkFezConfigFile || checkCybConfigFile) {
   program
-    .description('生产发布')
+    .description('SSH上线部署或部署静态资源')
     .parse(process.argv)
 
   sftp()

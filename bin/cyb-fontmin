@@ -12,7 +12,7 @@ const checkCybConfigFile = fs.existsSync(path.join(process.cwd(), './cyb.config.
 
 if (checkFezConfigFile || checkCybConfigFile) {
   program
-    .description('生产发布')
+    .description('特殊字体解决方案')
     .parse(process.argv)
 
   fontmin()

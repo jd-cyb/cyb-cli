@@ -12,7 +12,7 @@ const checkCybConfigFile = fs.existsSync(path.join(process.cwd(), './cyb.config.
 
 if (checkFezConfigFile || checkCybConfigFile) {
   program
-    .description('创建新项目')
+    .description('创建新页面')
     .parse(process.argv)
 
   page()
