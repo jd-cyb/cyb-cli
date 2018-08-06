@@ -82,12 +82,6 @@ const fezConfigDefault = {
    */
   style: {
     /**
-     * 选择css编译器【取值:less/sass/scss/styl/css】
-     * 自动化创建样式文件的扩展名
-     */
-    compiler: 'scss',
-
-    /**
      * less配置
      * https://www.npmjs.com/package/gulp-less
      */
@@ -107,12 +101,10 @@ const fezConfigDefault = {
 
     /**
      * autoprefixer配置
-     * "mobile": ["Android >= 4", "iOS >= 6"],
-     * "pc": ["last 3 versions", "Explorer >= 8", "Chrome >= 21", "Firefox >= 1", "Edge 13"],
-     * "all":["Android >= 4", "iOS >= 6", "last 3 versions", "Explorer >= 8", "Chrome >= 21", "Firefox >= 1", "Edge 13"]
+     * https://github.com/postcss/autoprefixer
      */
     autoprefixerOptions: {
-      browsers: ["Android >= 4", "iOS >= 6", "last 3 versions", "Explorer >= 8", "Chrome >= 21", "Firefox >= 1", "Edge 13"]
+      browsers: ["> 1%", "last 2 versions", "not ie <= 8"]
     }
   },
 
