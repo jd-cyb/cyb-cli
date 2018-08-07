@@ -102,7 +102,7 @@ const webpackConfig = {
           {
             loader: 'css-loader',
             options: {
-              url: !isProduction,
+              url: true,
               sourceMap: true
             }
           },
@@ -135,7 +135,7 @@ const webpackConfig = {
           {
             loader: 'css-loader',
             options: {
-              url: !isProduction,
+              url: true,
               sourceMap: true
             }
           }, ...(checkPostcssConfig ? [{
@@ -167,7 +167,7 @@ const webpackConfig = {
           {
             loader: 'css-loader',
             options: {
-              url: !isProduction,
+              url: true,
               sourceMap: true
             }
           }, ...(checkPostcssConfig ? [{
@@ -199,7 +199,7 @@ const webpackConfig = {
           {
             loader: 'css-loader',
             options: {
-              url: !isProduction,
+              url: true,
               sourceMap: true
             }
           }, ...(checkPostcssConfig ? [{
