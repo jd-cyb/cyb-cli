@@ -64,6 +64,10 @@ cyb init
 demo-cyb
 ├── cyb.config.js            /／ CYB功能配置文件
 ├── package.json             /／ 项目npm配置文件
+├── .babelrc                 /／ babel配置文件
+├── .editorconfig            /／ 编码风格配置文件
+├── .eslintrc.js             /／ eslint配置文件（可选）
+├── webpack.config.js        /／ webpack配置文件（可选）
 └── src                      /／ 源码目录
     ├── static               /／ 静态资源目录
     │   ├── fonts            /／ 字体目录
