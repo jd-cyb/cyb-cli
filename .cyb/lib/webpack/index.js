@@ -16,7 +16,7 @@ const outputPath = require('./output-path')
 
 const webpackGlob = () => {
   return new Promise((resolve, reject) => {
-    glob(path.join(process.cwd(), '**/webpack.config*.js'), (error, files) => {
+    glob(path.join(process.cwd(), 'webpack.config*.js'), (error, files) => {
       let webpackConfigGlob = {}
       files.map((file) => {
         webpackConfigGlob = merge(webpackConfigGlob, require(file))
