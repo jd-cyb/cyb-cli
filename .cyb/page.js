@@ -27,45 +27,49 @@ Handlebars.registerHelper('if_eq', function(a, b, opts) {
 })
 
 const createPage = (answers, templatePath) => {
-  return new Promise((resolve, reject) => {
-    const tempPath = templatePath
+  const tempPath = templatePath
 
-    cons.handlebars(`${tempPath}/template/src/views/index/index.html`, { name: answers.pageName, pagetype: 'page', style: answers.style })
-      .then((content) => {
 
-        const htmlPath = path.join(process.cwd(), 'src/views/', answers.pageName)
+  cons.handlebars(`${tempPath}/template/src/views/index/index.html`, { name: answers.pageName, pagetype: 'page', style: answers.style })
+    .then((content) => {
 
-        mkdirp.sync(htmlPath)
+      const htmlPath = path.join(process.cwd(), 'src/views/', answers.pageName)
 
-        fs.writeFile(`${htmlPath}/index.html`, content, (err) => {
-          fancyLog(chalk.green(`Create succeed: src/views/${answers.pageName}/index.html`))
-        })
+      mkdirp.sync(htmlPath)
 
-        return cons.handlebars(`${tempPath}/template/src/views/index/index.js`, {})
+      fs.writeFile(`${htmlPath}/index.html`, content, (err) => {
+        fancyLog(chalk.green(`Create succeed: src/views/${answers.pageName}/index.html`))
       })
-      .then((content) => {
+    })
+    .catch((error) => {
+      if (error) throw new Error(error)
+    })
 
-        const jsPath = path.join(process.cwd(), 'src/views/', answers.pageName)
+  cons.handlebars(`${tempPath}/template/src/views/index/index.js`, {})
+    .then((content) => {
+      const jsPath = path.join(process.cwd(), 'src/views/', answers.pageName)
 
-        mkdirp.sync(jsPath)
+      mkdirp.sync(jsPath)
 
-        fs.writeFile(`${jsPath}/index.js`, content, (err) => {
-          fancyLog(chalk.green(`Create succeed: src/views/${answers.pageName}/index.js`))
-        })
-
-        return cons.handlebars(`${tempPath}/template/src/static/styles/index.scss`, {})
+      fs.writeFile(`${jsPath}/index.js`, content, (err) => {
+        fancyLog(chalk.green(`Create succeed: src/views/${answers.pageName}/index.js`))
       })
+    })
+    .catch((error) => {
+      if (error) throw new Error(error)
+    })
+
+  if (answers.createStyle === true) {
+    cons.handlebars(`${tempPath}/template/src/static/styles/index.scss`, {})
       .then((content) => {
         fs.writeFile(`${path.join(process.cwd(),'src/static/styles/')}/${answers.pageName}.${answers.style}`, content, (err) => {
           fancyLog(chalk.green(`Create succeed: src/static/styles/${answers.pageName}.${answers.style}`))
-          resolve()
         })
       })
       .catch((error) => {
         if (error) throw new Error(error)
-        reject()
       })
-  })
+  }
 }
 
 module.exports = () => {
@@ -78,6 +82,14 @@ module.exports = () => {
           message: '请填写页面目录名（字母或数字组合）',
           default: 'page-demo'
         }, {
+          type: 'confirm',
+          name: 'createStyle',
+          message: '是否创建样式文件？',
+          default: false
+        }, {
+          when: function(answers) {
+            return answers.createStyle === true;
+          },
           type: 'list',
           name: 'style',
           message: '请选择样式编译',
