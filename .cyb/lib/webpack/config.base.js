@@ -22,7 +22,7 @@ const eslintLoader = () => ({
   test: /\.(js|vue)$/,
   loader: 'eslint-loader',
   enforce: 'pre',
-  exclude: /node_modules/,
+  exclude: /(node_modules|bower_components)/,
   options: {
     formatter: eslintFriendlyFormatter,
     eslintPath: path.join(process.cwd(), 'node_modules', 'eslint'),
