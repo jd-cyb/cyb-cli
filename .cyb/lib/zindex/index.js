@@ -117,6 +117,10 @@ module.exports = (applyDir = config.paths.dev.html) => {
         filter: alpha(opacity=100)!important;
         opacity: 1!important;
     }
+    .jumbotron {
+      background-color: #002a32;
+      color: #fff;
+    }
     </style>
 </head>
 
@@ -128,7 +132,8 @@ module.exports = (applyDir = config.paths.dev.html) => {
                 点击按钮链接打开项目页面，也可以扫描二维码在移动端同步开发和调试页面。
             </p>
             <p>
-                <a class="btn btn-primary" href="https://github.com/jd-cyb/cyb-cli" target="_blank" role="button">CYB Github</a>
+                <a class="btn btn-primary" href="http://cyb.jd.com" target="_blank" role="button">官方网站</a>
+                <a class="btn btn-warning" href="https://github.com/jd-cyb/cyb-cli/wiki" target="_blank" role="button">Wiki文档</a>
             </p>
         </div>
     </div>
@@ -140,7 +145,7 @@ module.exports = (applyDir = config.paths.dev.html) => {
         <!-- FOOTER -->
         <hr>
         <footer>
-            <p>© 2018 塞伯坦-CYB前端模块化工程构建工具</p>
+            <p>© 2018 塞伯坦（Cybertron）- CYB前端模块化工程构建工具</p>
         </footer>
     </div>
 
@@ -165,7 +170,7 @@ module.exports = (applyDir = config.paths.dev.html) => {
     {{#each this}}
     <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
         <div class="qrcode-img" data-href="{{url}}"></div>
-        <p><a class="btn btn-default" href="{{url}}" target="_blank">{{name}}</a></p>
+        <p><a class="btn btn-primary" href="{{url}}" target="_blank">{{name}}</a></p>
     </div>
     {{/each}}
 </script>
