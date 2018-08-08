@@ -640,15 +640,15 @@ module.exports = () => {
         rewriter: (url, process) => {
           if (/http|https|^(\/\/)/.test(url)) {
             return process(url)
-          } else if (/eot|ttf|woff|woff2|svg/.test(url)) {
+          } else if (/\.(eot|ttf|woff|woff2)/.test(url)) {
             url = url.replace(/(\.\.\/fonts)|(\/static\/fonts)/, 'static/fonts')
             return `${config.useCdn.fonts||config.useCdn.base}${url}`
-          } else if (/(png|jpg|gif)$/.test(url)) {
+          } else if (/\.(png|jpg|gif|svg)/.test(url)) {
             url = url.replace(/(\.\.\/images)|(\/static\/images)/, 'static/images')
             return `${config.useCdn.images||config.useCdn.base}${url}`
-          } else if (/(js)$/.test(url)) {
+          } else if (/\.(js)$/.test(url)) {
             return `${config.useCdn.js||config.useCdn.base}${url}`
-          } else if (/(css)$/.test(url)) {
+          } else if (/\.(css)$/.test(url)) {
             return `${config.useCdn.css||config.useCdn.base}${url}`
           } else {
             return process(url)
@@ -658,6 +658,29 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.tmp.dir))
       .on('end', () => {
         fancyLog(chalk.green('完成添加所有静态资源CDN地址。'))
+        cb()
+      })
+  }
+
+  /**
+   * 替换样式中url的相对地址
+   **/
+  function cssReplaceUrl(cb) {
+
+    vfs.src([`${config.paths.tmp.dir}/**/*.css`])
+      .pipe(cdnify({
+        base: '',
+        rewriter: (url, process) => {
+          if (/(^static|^\/static)\/(.*?)\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac|woff2?|eot|ttf|otf)/.test(url)) {
+            url = url.replace(/(static\/|\/static\/)/, '../')
+            return url
+          } else {
+            return process(url)
+          }
+        }
+      }))
+      .pipe(vfs.dest(config.paths.tmp.dir))
+      .on('end', () => {
         cb()
       })
   }
@@ -913,6 +936,9 @@ module.exports = () => {
     },
     function(next) {
       compileWebp(next)
+    },
+    function(next) {
+      cssReplaceUrl(next)
     },
     function(next) {
       cdnReplace(next)
