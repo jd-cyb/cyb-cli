@@ -7,28 +7,16 @@
 
 const path = require('path')
 const webpack = require('webpack')
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
+const notifier = require('node-notifier')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const babelrc = require('./babelrc')
 const config = require('../fezconfig')
 const outputPath = require('./output-path')
-const eslintFriendlyFormatter = require('eslint-friendly-formatter')
 const fs = require('fs')
-
 
 //是否是生产环境
 const isProduction = process.env.NODE_ENV === 'production'
-
-const eslintLoader = () => ({
-  test: /\.(js|vue)$/,
-  loader: 'eslint-loader',
-  enforce: 'pre',
-  exclude: /(node_modules|bower_components)/,
-  options: {
-    formatter: eslintFriendlyFormatter,
-    eslintPath: path.join(process.cwd(), 'node_modules', 'eslint'),
-    emitWarning: true
-  }
-})
 
 const checkPostcssConfig = fs.existsSync(path.join(process.cwd(), './postcss.config.js'))
 
@@ -40,9 +28,7 @@ const webpackConfig = {
   performance: {
     hints: false
   },
-  output: {
-    filename: '[name].js'
-  },
+  output: {},
   entry: {},
   /**
    * 模块解析
@@ -59,7 +45,6 @@ const webpackConfig = {
   },
   module: {
     rules: [
-      ...(config.eslint.available ? [eslintLoader()] : []),
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
@@ -69,11 +54,11 @@ const webpackConfig = {
         }]
       },
       {
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        test: /\.(png|jpe?g|gif)(\?.*)?$/,
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: '[name].[ext]',
+          name: isProduction ? '[name].[hash].[ext]' : '[name].[ext]',
           outputPath: outputPath.images()
         }
       },
@@ -82,16 +67,16 @@ const webpackConfig = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: '[name].[ext]',
+          name: isProduction ? '[name].[hash].[ext]' : '[name].[ext]',
           outputPath: outputPath.media()
         }
       },
       {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+        test: /((\.(woff2?|eot|ttf|otf))|((fonts|font)\/(.*?)\.svg))(\?.*)?$/,
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: '[name].[ext]',
+          name: isProduction ? '[name].[hash].[ext]' : '[name].[ext]',
           outputPath: outputPath.fonts()
         }
       },
@@ -226,9 +211,30 @@ const webpackConfig = {
      * 提取JS中引入的样式
      * 提取后的文件将会被保存在dist/static/js/目录
      */
-    new MiniCssExtractPlugin({
-      filename: "[name].css",
-      chunkFilename: "[name].css"
+    ...(isProduction ? [new MiniCssExtractPlugin({
+      filename: path.join(outputPath.css(), '[name].[hash].css'),
+      chunkFilename: path.join(outputPath.css(), '[name].[hash].css')
+    })] : []),
+
+    /**
+     * webpack错误提示
+     */
+    new FriendlyErrorsWebpackPlugin({
+      compilationSuccessInfo: {
+        messages: [],
+      },
+      onErrors: (severity, errors) => {
+        if (severity !== 'error') {
+          return;
+        }
+        const error = errors[0];
+        notifier.notify({
+          title: `${config.projectName} 编译出错`,
+          message: severity + ': ' + error.name,
+          subtitle: error.file || '',
+          icon: path.join(__dirname, '../', 'cyb-logo.png')
+        });
+      }
     })
   ]
 }
