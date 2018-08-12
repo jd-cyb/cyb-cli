@@ -42,6 +42,7 @@ const usemin = require('gulp-usemin')
 const minifyCSS = require('gulp-clean-css')
 const RevAll = require('gulp-rev')
 const RevReplace = require('gulp-rev-replace')
+const revFormat = require('gulp-rev-format');
 const revDel = require('gulp-rev-delete-original')
 const concatJs = require('gulp-concat')
 const concatCss = require('gulp-concat-css')
@@ -50,6 +51,7 @@ const cdnify = require('gulp-fez-cdn')
 const vfs = require('vinyl-fs')
 const async = require('async')
 const glob = require('glob')
+const ora = require('ora')
 const config = require('./lib/fezconfig')
 const webp = require('./lib/webp')
 const compileJs = require('./lib/webpack')
@@ -80,9 +82,8 @@ module.exports = () => {
    * 清除 dist 目录
    **/
   function delDist(cb) {
-    del([config.paths.dist.dir])
+    del(config.paths.dist.dir)
       .then(() => {
-        fancyLog(chalk.magenta('清除dist目录。'))
         cb()
       })
   }
@@ -93,9 +94,9 @@ module.exports = () => {
   function svgSymbol(cb) {
     if (!config.svgSymbol.available) return cb()
 
-    vfs.src(path.join(process.cwd(), config.paths.src.svg, '**/*.svg'))
+    vfs.src(`${config.paths.src.svg}/**/*.svg`)
       .pipe(svgmin())
-      .pipe(svgSymbols(Object.assign({}, config.svgSymbol.options)))
+      .pipe(svgSymbols(config.svgSymbol.options))
       .pipe(filter("**/*.svg"))
       .pipe(svgSymbolsToJs())
       .pipe(rename({
@@ -103,7 +104,7 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.common))
       .on('end', () => {
-        fancyLog(chalk.green('完成编译合并SVG高清图片/图标。'))
+        fancyLog(chalk.green('编译合并SVG高清图片/图标。'))
         cb()
       })
   }
@@ -112,10 +113,26 @@ module.exports = () => {
    * 处理图片
    **/
   function handleImages(cb) {
-    vfs.src(path.join(process.cwd(), config.paths.src.img, '**/*'))
+    const imagesPath = path.join(process.cwd(), config.paths.src.img)
+    const exist = fs.existsSync(imagesPath)
+
+    if (!exist) return cb()
+
+    vfs.src(`${imagesPath}/**/*`)
+      .pipe(vfs.dest(config.paths.tmp.img))
+      .pipe(RevAll())
+      .pipe(revFormat({
+        prefix: '.'
+      }))
+      .pipe(revDel())
+      .pipe(vfs.dest(config.paths.tmp.img))
+      .pipe(RevAll.manifest(path.join(config.paths.tmp.img, 'rev-manifest.json'), {
+        base: config.paths.tmp.img,
+        merge: true
+      }))
       .pipe(vfs.dest(config.paths.tmp.img))
       .on('end', () => {
-        fancyLog(chalk.green('完成处理images目录中所有图片。'))
+        fancyLog(chalk.green('处理images目录中所有图片。'))
         cb()
       })
   }
@@ -124,12 +141,26 @@ module.exports = () => {
    * 处理字体
    **/
   function handleFonts(cb) {
-    if (!config.useMd5.available) return cb()
+    const fontPath = path.join(process.cwd(), config.paths.src.fonts)
+    const exist = fs.existsSync(fontPath)
 
-    vfs.src(path.join(process.cwd(), config.paths.src.fonts, '**/*.{otf,eot,svg,ttf,woff,woff2}'))
+    if (!exist) return cb()
+
+    vfs.src(`${fontPath}/**/*.{otf,eot,svg,ttf,woff,woff2}`)
+      .pipe(vfs.dest(config.paths.tmp.fonts))
+      .pipe(RevAll())
+      .pipe(revFormat({
+        prefix: '.'
+      }))
+      .pipe(revDel())
+      .pipe(vfs.dest(config.paths.tmp.fonts))
+      .pipe(RevAll.manifest(path.join(config.paths.tmp.fonts, 'rev-manifest.json'), {
+        base: config.paths.tmp.fonts,
+        merge: true
+      }))
       .pipe(vfs.dest(config.paths.tmp.fonts))
       .on('end', () => {
-        fancyLog(chalk.green('完成处理fonts目录中所有字体文件。'))
+        fancyLog(chalk.green('处理fonts目录中所有字体文件。'))
         cb()
       })
   }
@@ -142,11 +173,13 @@ module.exports = () => {
     const exist = fs.existsSync(customPath)
 
     if (!exist) return cb()
-
+    /**
+     * 自定义custom目录不做revision
+     */
     vfs.src(`${customPath}/**/*`)
       .pipe(vfs.dest(config.paths.tmp.custom))
       .on('end', () => {
-        fancyLog(chalk.green('完成处理custom目录中所有自定义文件。'))
+        fancyLog(chalk.green('处理custom目录中所有自定义文件。'))
         cb()
       })
   }
@@ -155,9 +188,9 @@ module.exports = () => {
    * 编译css
    **/
   function compileCss(cb) {
-    if (glob.sync(`${config.paths.src.styles}/*.css`).length === 0 && glob.sync(`${config.paths.src.appJs}/**/index.css`).length === 0) return cb()
+    if (glob.sync(`${config.paths.src.styles}/*.css`).length === 0) return cb()
 
-    vfs.src([`${config.paths.src.styles}/*.css`, `${config.paths.src.appJs}/**/index.css`])
+    vfs.src(`${config.paths.src.styles}/*.css`)
       //css中的rem转换
       .pipe(gulpif(
         config.useREM.css.available,
@@ -171,6 +204,17 @@ module.exports = () => {
         minifyCSS(config.useCssMin.options)
       ))
       .pipe(vfs.dest(config.paths.tmp.css))
+      .pipe(RevAll())
+      .pipe(revFormat({
+        prefix: '.'
+      }))
+      .pipe(revDel())
+      .pipe(vfs.dest(config.paths.tmp.css))
+      .pipe(RevAll.manifest(path.join(config.paths.tmp.css, 'rev-manifest.json'), {
+        base: config.paths.tmp.css,
+        merge: true
+      }))
+      .pipe(vfs.dest(config.paths.tmp.css))
       .on('end', () => {
         fancyLog(chalk.green(`完成编译CSS文件。`))
         cb()
@@ -181,9 +225,9 @@ module.exports = () => {
    * 编译less
    **/
   function compileLess(cb) {
-    if (glob.sync(`${config.paths.src.styles}/*.less`).length === 0 && glob.sync(`${config.paths.src.appJs}/**/index.less`).length === 0) return cb()
+    if (glob.sync(`${config.paths.src.styles}/*.less`).length === 0) return cb()
 
-    vfs.src([`${config.paths.src.styles}/*.less`, `${config.paths.src.appJs}/**/index.less`])
+    vfs.src(`${config.paths.src.styles}/*.less`)
       .pipe(less(Object.assign({
         relativeUrls: true //将网址编译成相对网址
       }, config.style.lessOptions)))
@@ -200,6 +244,17 @@ module.exports = () => {
         minifyCSS(config.useCssMin.options)
       ))
       .pipe(vfs.dest(config.paths.tmp.css))
+      .pipe(RevAll())
+      .pipe(revFormat({
+        prefix: '.'
+      }))
+      .pipe(revDel())
+      .pipe(vfs.dest(config.paths.tmp.css))
+      .pipe(RevAll.manifest(path.join(config.paths.tmp.css, 'rev-manifest.json'), {
+        base: config.paths.tmp.css,
+        merge: true
+      }))
+      .pipe(vfs.dest(config.paths.tmp.css))
       .on('end', () => {
         fancyLog(chalk.green(`完成编译LESS文件。`))
         cb()
@@ -210,9 +265,9 @@ module.exports = () => {
    * 编译sass
    **/
   function compileSass(cb) {
-    if (glob.sync(`${config.paths.src.styles}/*.{scss,sass}`).length === 0 && glob.sync(`${config.paths.src.appJs}/**/index.{scss,sass}`).length === 0) return cb()
+    if (glob.sync(`${config.paths.src.styles}/*.{scss,sass}`).length === 0) return cb()
 
-    vfs.src([`${config.paths.src.styles}/*.{scss,sass}`, `${config.paths.src.appJs}/**/index.{scss,sass}`])
+    vfs.src(`${config.paths.src.styles}/*.{scss,sass}`)
       .pipe(sass(Object.assign({
         /**
          * ------- outputStyle 取值 ------
@@ -236,6 +291,17 @@ module.exports = () => {
         minifyCSS(config.useCssMin.options)
       ))
       .pipe(vfs.dest(config.paths.tmp.css))
+      .pipe(RevAll())
+      .pipe(revFormat({
+        prefix: '.'
+      }))
+      .pipe(revDel())
+      .pipe(vfs.dest(config.paths.tmp.css))
+      .pipe(RevAll.manifest(path.join(config.paths.tmp.css, 'rev-manifest.json'), {
+        base: config.paths.tmp.css,
+        merge: true
+      }))
+      .pipe(vfs.dest(config.paths.tmp.css))
       .on('end', () => {
         fancyLog(chalk.green(`完成编译SASS文件。`))
         cb()
@@ -246,9 +312,9 @@ module.exports = () => {
    * 编译stylus
    **/
   function compileStylus(cb) {
-    if (glob.sync(`${config.paths.src.styles}/*.styl`).length === 0 && glob.sync(`${config.paths.src.appJs}/**/index.styl`).length === 0) return cb()
+    if (glob.sync(`${config.paths.src.styles}/*.styl`).length === 0) return cb()
 
-    vfs.src([`${config.paths.src.styles}/*.styl`, `${config.paths.src.appJs}/**/index.styl`])
+    vfs.src(`${config.paths.src.styles}/*.styl`)
       .pipe(stylus(Object.assign({}, config.style.stylusOptions)))
       //css中的rem转换
       .pipe(gulpif(
@@ -263,6 +329,17 @@ module.exports = () => {
         minifyCSS(config.useCssMin.options)
       ))
       .pipe(vfs.dest(config.paths.tmp.css))
+      .pipe(RevAll())
+      .pipe(revFormat({
+        prefix: '.'
+      }))
+      .pipe(revDel())
+      .pipe(vfs.dest(config.paths.tmp.css))
+      .pipe(RevAll.manifest(path.join(config.paths.tmp.css, 'rev-manifest.json'), {
+        base: config.paths.tmp.css,
+        merge: true
+      }))
+      .pipe(vfs.dest(config.paths.tmp.css))
       .on('end', () => {
         fancyLog(chalk.green(`完成编译Stylus文件。`))
         cb()
@@ -273,10 +350,10 @@ module.exports = () => {
    * 编译业务层js
    **/
   function handleJs(cb) {
-    fancyLog(chalk.yellow('编译打包Javascript...'))
+    const spinner = ora(chalk.yellow('编译打包Javascript...')).start()
     compileJs.dist()
       .then(() => {
-        // spinner.stop()
+        spinner.stop()
         fancyLog(chalk.green('完成编译打包Javascript。'))
         cb()
       })
@@ -316,8 +393,18 @@ module.exports = () => {
       .pipe(fontFilter)
       .pipe(flatten())
       .pipe(vfs.dest(config.paths.tmp.fonts))
+      .pipe(RevAll())
+      .pipe(revFormat({
+        prefix: '.'
+      }))
+      .pipe(revDel())
+      .pipe(vfs.dest(config.paths.tmp.fonts))
+      .pipe(RevAll.manifest(path.join(config.paths.tmp.fonts, 'rev-manifest.json'), {
+        base: config.paths.tmp.fonts,
+        merge: true
+      }))
+      .pipe(vfs.dest(config.paths.tmp.fonts))
       .on('end', () => {
-        fancyLog(chalk.green('完成处理Bower第三方框架库文件到缓存目录。'))
         cb()
       })
   }
@@ -326,12 +413,11 @@ module.exports = () => {
     if (!bowerAvailable() || config.useInject.vendor.js.length === 0) return cb()
 
     let fileIndex = 0
-
-    for (let elem of config.useInject.vendor.js) {
+    for (let [index, elem] of config.useInject.vendor.js.entries()) {
       vfs.src('./tmp/bower/**/*.js')
         .pipe(filter(elem.contain))
         .pipe(concatOrder(elem.contain))
-        .pipe(concatJs(`vendor-${elem.target}`))
+        .pipe(concatJs(`vendor-${index}-bower-${elem.target}`))
         .pipe(gulpif(
           config.useJsMin,
           uglify()
@@ -339,7 +425,6 @@ module.exports = () => {
         .pipe(vfs.dest(config.paths.tmp.appjs))
         .on("end", () => {
           fileIndex++
-
           let delFiles = []
 
           for (let item of elem.contain) {
@@ -349,7 +434,7 @@ module.exports = () => {
           del.sync(delFiles)
 
           if (fileIndex >= config.useInject.vendor.js.length) {
-            fancyLog(chalk.green('完成合并自定义配置的第三方框架库JS文件。'))
+            fancyLog(chalk.green('合并自定义配置的第三方框架库JS文件。'))
             cb()
           }
         })
@@ -361,14 +446,14 @@ module.exports = () => {
 
     vfs.src('./tmp/bower/**/*.js')
       .pipe(filter('**/*.js'))
-      .pipe(concatJs('vendor.js'))
+      .pipe(concatJs('vendor-bower.js'))
       .pipe(gulpif(
         config.useJsMin,
         uglify()
       ))
       .pipe(vfs.dest(config.paths.tmp.appjs))
       .on('end', () => {
-        fancyLog(chalk.green('完成合并默认的第三方框架库JS文件。'))
+        fancyLog(chalk.green('合并默认的第三方框架库JS文件。'))
         cb()
       })
   }
@@ -378,11 +463,11 @@ module.exports = () => {
 
     let fileIndex = 0
 
-    for (let elem of config.useInject.vendor.css) {
+    for (let [index, elem] of config.useInject.vendor.css.entries()) {
       vfs.src(`./tmp/bower/**/*.css`)
         .pipe(filter(elem.contain))
         .pipe(concatOrder(elem.contain))
-        .pipe(concatCss(`vendor-${elem.target}`, { rebaseUrls: false }))
+        .pipe(concatCss(`vendor-${index}-bower-${elem.target}`, { rebaseUrls: false }))
         .pipe(gulpif(
           config.useCssMin.available,
           minifyCSS()
@@ -400,7 +485,7 @@ module.exports = () => {
           del.sync(delFiles)
 
           if (fileIndex >= config.useInject.vendor.css.length) {
-            fancyLog(chalk.green('完成合并自定义配置的第三方框架库样式文件。'))
+            fancyLog(chalk.green('合并自定义配置的第三方框架库样式文件。'))
             cb()
           }
         })
@@ -412,7 +497,7 @@ module.exports = () => {
 
     vfs.src('./tmp/bower/**/*.css')
       .pipe(filter('**/*.css'))
-      .pipe(concatCss('vendor.css', { rebaseUrls: false }))
+      .pipe(concatCss('vendor-bower.css', { rebaseUrls: false }))
       .pipe(gulpif(
         config.useCssMin.available,
         minifyCSS()
@@ -421,7 +506,7 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.tmp.css))
       .on("end", () => {
         del.sync(['./tmp/bower'])
-        fancyLog(chalk.green('完成合并默认的第三方框架库样式文件。'))
+        fancyLog(chalk.green('合并默认的第三方框架库样式文件。'))
         cb()
       })
   }
@@ -429,13 +514,12 @@ module.exports = () => {
   /**
    * 复制公共脚本到缓存目录等待处理
    **/
-  function copyLibFiles(cb) {
+  function copyCommonFiles(cb) {
     if (!fs.existsSync(path.join(process.cwd(), config.paths.src.common))) return cb()
 
-    vfs.src(path.join(process.cwd(), config.paths.src.common, '**/*.js'))
-      .pipe(vfs.dest(`./tmp/common/js`))
+    vfs.src(`${config.paths.src.common}/**/*.js`)
+      .pipe(vfs.dest(config.paths.tmp.common))
       .on('end', () => {
-        fancyLog(chalk.green('完成处理common目录中公共JS文件到缓存目录。'))
         cb()
       })
   }
@@ -448,11 +532,11 @@ module.exports = () => {
 
     let fileIndex = 0
 
-    for (let elem of config.useInject.common.js) {
-      vfs.src('./tmp/common/**/*.js')
+    for (let [index, elem] of config.useInject.common.js.entries()) {
+      vfs.src([`${config.paths.tmp.common}/**/*.js`])
         .pipe(filter(elem.contain))
         .pipe(concatOrder(elem.contain))
-        .pipe(concatJs(`common-${elem.target}`))
+        .pipe(concatJs(`common-${index}-browser-${elem.target}`))
         .pipe(gulpif(
           config.useJsMin,
           uglify()
@@ -464,13 +548,13 @@ module.exports = () => {
           let delFiles = []
 
           for (let item of elem.contain) {
-            delFiles.push(`./tmp/common/${item}`)
+            delFiles.push(path.join(config.paths.tmp.common, `${item}*`))
           }
 
           del.sync(delFiles)
 
           if (fileIndex >= config.useInject.common.js.length) {
-            fancyLog(chalk.green('完成合并自定义配置的common目录中公共JS文件。'))
+            fancyLog(chalk.green('合并自定义配置的common目录中公共JS文件。'))
             cb()
           }
         })
@@ -483,7 +567,7 @@ module.exports = () => {
   function commonAssignJs(cb) {
     if (!fs.existsSync(path.join(process.cwd(), config.paths.src.common))) return cb()
 
-    vfs.src('./tmp/common/**/assign*.js')
+    vfs.src(`${config.paths.tmp.common}/**/assign*.js`)
       .pipe(flatten())
       .pipe(gulpif(
         config.useJsMin,
@@ -491,8 +575,8 @@ module.exports = () => {
       ))
       .pipe(vfs.dest(config.paths.tmp.appjs))
       .on("end", () => {
-        del.sync(`./tmp/common/**/assign*.js`)
-        fancyLog(chalk.green('完成插入指定的common目录中的文件到html模板页面。'))
+        del.sync(path.join(config.paths.tmp.common, `**/assign*.js`))
+        fancyLog(chalk.green('插入指定的common目录中的文件到html模板页面。'))
         cb()
       })
   }
@@ -501,20 +585,65 @@ module.exports = () => {
    * 合并 fez.config.js 中未配置的剩下的所有公共脚本
    **/
   function commonJs(cb) {
-    if (!fs.existsSync(path.join(process.cwd(), config.paths.src
-        .common))) return cb()
+    if (!fs.existsSync(path.join(process.cwd(), config.paths.src.common))) return cb()
 
-    vfs.src('./tmp/common/**/*.js')
+    vfs.src(`${config.paths.tmp.common}**/*.js`)
       .pipe(filter('**/*.js'))
-      .pipe(concatJs('common.js'))
+      .pipe(concatJs('common-browser.js'))
       .pipe(gulpif(
         config.useJsMin,
         uglify()
       ))
       .pipe(vfs.dest(config.paths.tmp.appjs))
       .on("end", () => {
-        del.sync(['./tmp/common'])
-        fancyLog(chalk.green('完成合并默认的common目录中公共JS文件。'))
+        del.sync([config.paths.tmp.common])
+        fancyLog(chalk.green('合并默认的common目录中公共JS文件。'))
+        cb()
+      })
+  }
+
+  /**
+   * 为bower和common统一添加版本号
+   **/
+  function reversionBCJs(cb) {
+    if (!config.useMd5.available) return cb()
+
+    vfs.src(`${config.paths.tmp.appjs}/**/*.js`)
+      .pipe(RevAll())
+      .pipe(revFormat({
+        prefix: '.'
+      }))
+      .pipe(revDel())
+      .pipe(vfs.dest(config.paths.tmp.appjs))
+      .pipe(RevAll.manifest(path.join(config.paths.tmp.appjs, 'rev-manifest.json'), {
+        base: config.paths.tmp.appjs,
+        merge: true
+      }))
+      .pipe(vfs.dest(config.paths.tmp.appjs))
+      .on('end', () => {
+        cb()
+      })
+  }
+
+  /**
+   * 为bower和common统一添加版本号
+   **/
+  function reversionBCCss(cb) {
+    if (!config.useMd5.available) return cb()
+
+    vfs.src(`${config.paths.tmp.css}/**/*.css`)
+      .pipe(RevAll())
+      .pipe(revFormat({
+        prefix: '.'
+      }))
+      .pipe(revDel())
+      .pipe(vfs.dest(config.paths.tmp.css))
+      .pipe(RevAll.manifest(path.join(config.paths.tmp.css, 'rev-manifest.json'), {
+        base: config.paths.tmp.css,
+        merge: true
+      }))
+      .pipe(vfs.dest(config.paths.tmp.css))
+      .on('end', () => {
         cb()
       })
   }
@@ -550,7 +679,7 @@ module.exports = () => {
     //合并后的bower文件注入
     const injectVendorFiles = lazypipe()
       .pipe(() => {
-        return inject(vfs.src([`./tmp/static/js/**/manifest*.js`, `./tmp/static/js/**/vendor*.js`, `./tmp/static/css/**/vendor*.css`, `./tmp/static/js/**/vendor*.css`], {
+        return inject(vfs.src([`./tmp/static/js/**/vendor*.js`, `./tmp/static/css/**/vendor*.css`, `./tmp/static/js/**/vendor*.css`], {
           read: false
         }), {
           starttag: '<!-- inject:vendor:{{ext}} -->',
@@ -573,6 +702,16 @@ module.exports = () => {
         })
       })
 
+    /**
+     * 将webpack生成的manifest自动注入到html中
+     */
+    const injectManifest = lazypipe()
+      .pipe(() => {
+        const manifestFile = glob.sync(path.join(config.paths.tmp.appjs, 'manifest*.js'))[0]
+        const manifestScriptString = `<script>${fs.readFileSync(manifestFile).toString('utf-8')}</script>`
+        return injectString.before('<!-- inject:vendor:js -->', manifestScriptString)
+      });
+
     //处理页面
     const injectHtml = (es) => {
       return es.map((file, cb) => {
@@ -590,7 +729,7 @@ module.exports = () => {
           ))
           .pipe(gulpif(
             config.useInject.page,
-            inject(vfs.src([`./tmp/static/js/**/assign*-${cateName}*.js`, `./tmp/**/css/${cateName}.css`, `./tmp/**/css/${cateName}/index.css`, `./tmp/static/js/**/${cateName}.js`, `./tmp/**/js/${cateName}.css`], {
+            inject(vfs.src([`./tmp/static/js/**/assign*-${cateName}*.js`, `./tmp/**/css/${cateName}.css`, `./tmp/**/css/${cateName}.*.css`, `./tmp/**/css/${cateName}/index.css`, `./tmp/static/js/**/${cateName}.js`, `./tmp/static/js/**/${cateName}.*.js`, `./tmp/**/js/${cateName}.css`], {
               read: false
             }), {
               starttag: '<!-- inject:page:{{ext}} -->',
@@ -599,6 +738,7 @@ module.exports = () => {
               quiet: true
             })
           ))
+          .pipe(injectManifest())
           .pipe(gulpif(
             config.useHtmlMin.available,
             htmlMinPipe()
@@ -617,13 +757,14 @@ module.exports = () => {
       restore: true
     })
 
-    vfs.src(path.join(process.cwd(), config.paths.src.html, '**/*.html'))
+    vfs.src(`${config.paths.src.html}/**/*.html`)
       .pipe(indexHtmlFilter)
       .pipe(injectHtml(es))
       .pipe(indexHtmlFilter.restore)
       .pipe(vfs.dest(config.paths.tmp.html))
       .on("end", () => {
         fancyLog(chalk.green('完成编译HTML并处理编译后的JS、CSS文件自动引用到HTML模板页面。'))
+        del(path.join(config.paths.tmp.appjs, 'manifest*.js'))
         cb()
       })
   }
@@ -699,70 +840,12 @@ module.exports = () => {
   }
 
   /**
-   * 生成Md5版本号
-   **/
-  function reversion(cb) {
-    if (!config.useMd5.available) return cb()
-
-    vfs.src([`${config.paths.tmp.dir}/**/*`, `!${config.paths.tmp.dir}/**/*.html`, `!${config.paths.tmp.dir}/**/images/**/*`, `!${config.paths.tmp.dir}/**/fonts/**/*`])
-      .pipe(RevAll())
-      .pipe(revDel())
-      .pipe(vfs.dest(config.paths.tmp.dir))
-      .pipe(RevAll.manifest({
-        merge: true
-      }))
-      .pipe(vfs.dest(config.paths.tmp.dir))
-      .on('end', () => {
-        fancyLog(chalk.green('完成添加JS、CSS资源MD5版本号。'))
-        cb()
-      })
-  }
-
-  /**
-   * 为图片生成Md5版本号
-   **/
-  function reversionImages(cb) {
-    vfs.src(path.join(process.cwd(), config.paths.tmp.img, '**/*'))
-      .pipe(RevAll())
-      .pipe(revDel())
-      .pipe(vfs.dest(config.paths.tmp.img))
-      .pipe(RevAll.manifest({
-        merge: true
-      }))
-      .pipe(vfs.dest(config.paths.tmp.img))
-      .on('end', () => {
-        fancyLog(chalk.green('完成添加图片资源MD5版本号。'))
-        cb()
-      })
-  }
-
-  /**
-   * 为字体生成Md5版本号
-   **/
-  function reversionFonts(cb) {
-    if (!config.useMd5.available) return cb()
-
-    vfs.src(path.join(process.cwd(), config.paths.tmp.fonts, '**/*.{otf,eot,svg,ttf,woff,woff2}'))
-      .pipe(RevAll())
-      .pipe(revDel())
-      .pipe(vfs.dest(config.paths.tmp.fonts))
-      .pipe(RevAll.manifest({
-        merge: true
-      }))
-      .pipe(vfs.dest(config.paths.tmp.fonts))
-      .on('end', () => {
-        fancyLog(chalk.green('完成添加字体资源MD5版本号。'))
-        cb()
-      })
-  }
-
-  /**
    * 替换md5后缀的文件名
    */
   function reversionRepalce(cb) {
     if (!config.useMd5.available) return cb()
 
-    let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest*.json`)
+    let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest.json`)
     vfs.src([`${config.paths.tmp.dir}/**/*`])
       .pipe(RevReplace({
         manifest: manifest
@@ -770,6 +853,7 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.tmp.dir))
       .on('end', () => {
         fancyLog(chalk.green('生成所有静态资源MD5版本号。'))
+        del(`${config.paths.tmp.dir}/**/rev-manifest.json`)
         cb()
       })
   }
@@ -782,7 +866,7 @@ module.exports = () => {
     const delTmp = () => del([config.paths.tmp.dir])
 
     vfs.src(`${config.paths.tmp.dir}/**/*`, {
-        base: config.paths.tmp.dir
+        base: config.paths.tmp.dir,
       })
       .pipe(vfs.dest(config.paths.dist.dir))
       .on('end', () => {
@@ -791,7 +875,6 @@ module.exports = () => {
         cb()
       })
   }
-
 
   /**
    * 生产任务
@@ -804,42 +887,6 @@ module.exports = () => {
     },
     function(next) {
       async.parallel([
-        function(cb) {
-          compileCss(cb)
-        },
-        function(cb) {
-          compileLess(cb)
-        },
-        function(cb) {
-          compileSass(cb)
-        },
-        function(cb) {
-          compileStylus(cb)
-        },
-        function(cb) {
-          handleImages(cb)
-        },
-        function(cb) {
-          handleFonts(cb)
-        },
-        function(cb) {
-          handleCustom(cb)
-        },
-        function(cb) {
-          svgSymbol(cb)
-        }
-      ], function(error) {
-        if (error) {
-          throw new Error(error)
-        }
-        next()
-      })
-    },
-    function(next) {
-      async.parallel([
-        function(cb) {
-          handleJs(cb)
-        },
         function(cb) {
           async.series([
             function(next) {
@@ -885,7 +932,10 @@ module.exports = () => {
         function(cb) {
           async.series([
             function(next) {
-              copyLibFiles(next)
+              copyCommonFiles(next)
+            },
+            function(cb) {
+              svgSymbol(cb)
             },
             function(next) {
               commonCustomJs(next)
@@ -911,18 +961,12 @@ module.exports = () => {
       })
     },
     function(next) {
-      compileHtml(next)
-    },
-    function(next) {
       async.parallel([
         function(cb) {
-          reversion(cb)
+          reversionBCJs(cb)
         },
         function(cb) {
-          reversionImages(cb)
-        },
-        function(cb) {
-          reversionFonts(cb)
+          reversionBCCss(cb)
         }
       ], function(error) {
         if (error) {
@@ -930,6 +974,42 @@ module.exports = () => {
         }
         next()
       })
+    },
+    function(next) {
+      async.parallel([
+        function(cb) {
+          compileCss(cb)
+        },
+        function(cb) {
+          compileLess(cb)
+        },
+        function(cb) {
+          compileSass(cb)
+        },
+        function(cb) {
+          compileStylus(cb)
+        },
+        function(cb) {
+          handleImages(cb)
+        },
+        function(cb) {
+          handleFonts(cb)
+        },
+        function(cb) {
+          handleCustom(cb)
+        }
+      ], function(error) {
+        if (error) {
+          throw new Error(error)
+        }
+        next()
+      })
+    },
+    function(next) {
+      handleJs(next)
+    },
+    function(next) {
+      compileHtml(next)
     },
     function(next) {
       reversionRepalce(next)
