@@ -109,7 +109,7 @@ module.exports = {
             //获取所有js入口
             files.map((file) => {
               const source_name = path.dirname(file).split('/').pop()
-              webpackConfig.entry[outputPath.js(source_name)] = file
+              webpackConfig.entry[source_name] = file
             })
 
             webpack(webpackConfig, function(err, stats) {
