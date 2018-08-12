@@ -168,9 +168,9 @@ module.exports = () => {
    * 编译css
    */
   function compileCss(cb = () => {}) {
-    if (glob.sync(`${config.paths.src.styles}/*.css`).length === 0 && glob.sync(`${config.paths.src.appJs}/**/index.css`).length === 0) return cb()
+    if (glob.sync(`${config.paths.src.styles}/*.css`).length === 0) return cb()
 
-    vfs.src([`${config.paths.src.styles}/*.css`, `${config.paths.src.appJs}/**/index.css`])
+    vfs.src(`${config.paths.src.styles}/*.css`)
       .pipe(plumber({
         errorHandler: notify.onError("Error: <%= error.message %>")
       }))
@@ -194,9 +194,9 @@ module.exports = () => {
    * 编译less
    */
   function compileLess(cb = () => {}) {
-    if (glob.sync(`${config.paths.src.styles}/*.less`).length === 0 && glob.sync(`${config.paths.src.appJs}/**/index.less`).length === 0) return cb()
+    if (glob.sync(`${config.paths.src.styles}/*.less`).length === 0) return cb()
 
-    vfs.src([`${config.paths.src.styles}/*.less`, `${config.paths.src.appJs}/**/index.less`])
+    vfs.src(`${config.paths.src.styles}/*.less`)
       .pipe(plumber({
         errorHandler: notify.onError("Error: <%= error.message %>")
       }))
@@ -228,9 +228,9 @@ module.exports = () => {
    * 编译sass
    */
   function compileSass(cb = () => {}) {
-    if (glob.sync(`${config.paths.src.styles}/*.{scss,sass}`).length === 0 && glob.sync(`${config.paths.src.appJs}/**/index.{scss,sass}`).length === 0) return cb()
+    if (glob.sync(`${config.paths.src.styles}/*.{scss,sass}`).length === 0) return cb()
 
-    vfs.src([`${config.paths.src.styles}/*.{scss,sass}`, `${config.paths.src.appJs}/**/index.{scss,sass}`])
+    vfs.src(`${config.paths.src.styles}/*.{scss,sass}`)
       .pipe(plumber({
         errorHandler: notify.onError("Error: <%= error.message %>")
       }))
@@ -269,9 +269,9 @@ module.exports = () => {
    * 编译stylus
    */
   function compileStylus(cb = () => {}) {
-    if (glob.sync(`${config.paths.src.styles}/*.styl`).length === 0 && glob.sync(`${config.paths.src.appJs}/**/index.styl`).length === 0) return cb()
+    if (glob.sync(`${config.paths.src.styles}/*.styl`).length === 0) return cb()
 
-    vfs.src([`${config.paths.src.styles}/*.styl`, `${config.paths.src.appJs}/**/index.styl`])
+    vfs.src(`${config.paths.src.styles}/*.styl`)
       .pipe(plumber({
         errorHandler: notify.onError("Error: <%= error.message %>")
       }))
