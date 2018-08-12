@@ -48,6 +48,13 @@ const fezConfigDefault = {
      */
     extract: {
       js: []
+    },
+    /**
+     * webpack打包档案分析
+     */
+    analyzer: {
+      available: false,
+      options: {}
     }
   },
 
