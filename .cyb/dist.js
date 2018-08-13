@@ -12,9 +12,6 @@
  */
 
 const path = require('path')
-const svgSymbols = require('gulp-svg-symbols')
-const svgmin = require('gulp-svgmin')
-const svgSymbolsToJs = require('gulp-fez-svg-symbols-tojs')
 const injectString = require('gulp-inject-string')
 const gulpReplace = require('gulp-replace')
 const fs = require('fs')
@@ -84,27 +81,6 @@ module.exports = () => {
   function delDist(cb) {
     del(config.paths.dist.dir)
       .then(() => {
-        cb()
-      })
-  }
-
-  /**
-   * 合并SVG图标
-   */
-  function svgSymbol(cb) {
-    if (!config.svgSymbol.available) return cb()
-
-    vfs.src(`${config.paths.src.svg}/**/*.svg`)
-      .pipe(svgmin())
-      .pipe(svgSymbols(config.svgSymbol.options))
-      .pipe(filter("**/*.svg"))
-      .pipe(svgSymbolsToJs())
-      .pipe(rename({
-        extname: ".js"
-      }))
-      .pipe(vfs.dest(config.paths.tmp.common))
-      .on('end', () => {
-        fancyLog(chalk.green('编译合并SVG高清图片/图标。'))
         cb()
       })
   }
@@ -812,8 +788,8 @@ module.exports = () => {
       .pipe(cdnify({
         base: '',
         rewriter: (url, process) => {
-          if (/(^static|^\/static)\/(.*?)\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac|woff2?|eot|ttf|otf)/.test(url)) {
-            url = url.replace(/(static\/|\/static\/)/, '../')
+          if (/(^(\/)?static)\/(.*?)\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac|woff2?|eot|ttf|otf)/.test(url)) {
+            url = url.replace(/((\/)?static\/)/, '../')
             return url
           } else {
             return process(url)
@@ -933,9 +909,6 @@ module.exports = () => {
           async.series([
             function(next) {
               copyCommonFiles(next)
-            },
-            function(cb) {
-              svgSymbol(cb)
             },
             function(next) {
               commonCustomJs(next)
