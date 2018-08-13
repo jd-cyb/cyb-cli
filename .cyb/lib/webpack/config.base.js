@@ -44,8 +44,7 @@ const webpackConfig = {
     modules: [path.join(__dirname, '../../../', 'node_modules'), path.join(process.cwd(), 'node_modules'), "node_modules"]
   },
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         use: [{
@@ -54,7 +53,17 @@ const webpackConfig = {
         }]
       },
       {
-        test: /\.(png|jpe?g|gif)(\?.*)?$/,
+        test: /\.svg$/,
+        exclude: /(node_modules|bower_components)/,
+        include: path.resolve(process.cwd(), "src", config.svgSprite.options.publicPath),
+        use: [{
+          loader: 'svg-sprite-loader',
+          options: config.svgSprite.options
+        }]
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        exclude: path.resolve(process.cwd(), 'src', config.svgSprite.options.publicPath),
         loader: 'url-loader',
         options: {
           limit: 10000,
@@ -62,6 +71,7 @@ const webpackConfig = {
           outputPath: outputPath.images()
         }
       },
+
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
         loader: 'url-loader',
