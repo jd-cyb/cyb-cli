@@ -55,6 +55,12 @@ const fezConfigDefault = {
     analyzer: {
       available: false,
       options: {}
+    },
+  },
+
+  svgSprite: {
+    options: {
+      publicPath: 'static/svg'
     }
   },
 
