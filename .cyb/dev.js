@@ -18,9 +18,6 @@ const chalk = require('chalk')
 const del = require('del')
 const globWatcher = require('glob-watcher')
 const vfs = require('vinyl-fs')
-const svgSymbols = require('gulp-svg-symbols')
-const svgmin = require('gulp-svgmin')
-const svgSymbolsToJs = require('gulp-fez-svg-symbols-tojs')
 const injectString = require('gulp-inject-string')
 const gulpReplace = require('gulp-replace')
 const mainBowerFiles = require('main-bower-files')
@@ -298,28 +295,6 @@ module.exports = () => {
   }
 
   /**
-   * 合并SVG图标
-   */
-  function svgSymbol(cb = () => {}) {
-    if (!config.svgSymbol.available) return cb()
-
-    vfs.src(path.join(process.cwd(), config.paths.src.svg, '**/*.svg'))
-      .pipe(svgmin())
-      .pipe(svgSymbols(Object.assign({}, config.svgSymbol.options)))
-      .pipe(filter("**/*.svg"))
-      .pipe(svgSymbolsToJs())
-      .pipe(rename({
-        extname: ".js"
-      }))
-      .pipe(vfs.dest(config.paths.dev.common))
-      .on('end', () => {
-        reloadHandler()
-        fancyLog(chalk.yellow('编译合并SVG高清图片/图标...'))
-        cb()
-      })
-  }
-
-  /**
    * 复制bower文件到dev目录
    * 研发环境直接使用 bower 路径 不对文件作任何处理
    */
@@ -519,15 +494,6 @@ module.exports = () => {
               copyHandler('img', path.join('**/', path.basename(file)))
             }
             break
-          case 'svg':
-            if (type === 'removed') {
-              const tmp = `${config.paths.dev.svg}/**/${pathParse.base}`
-
-              del([tmp])
-            } else {
-              svgSymbol()
-            }
-            break
 
           case 'fonts':
             if (type === 'removed') {
@@ -707,9 +673,6 @@ module.exports = () => {
         },
         function(cb) {
           copyImages(cb)
-        },
-        function(cb) {
-          svgSymbol(cb)
         },
         function(cb) {
           copyFonts(cb)
