@@ -74,21 +74,33 @@ module.exports = () => {
     conn.on('ready', function() {
       conn.sftp(function(err, sftp) {
         if (!err) {
-          vfs.src(distPath)
-            .pipe(uploader(sftp, sftpConfig))
-            .on('data', function(data) {
-              // console.log(data)
-            })
-            .on('end', function() {
+          sftp.stat(sftpConfig.remotePath, function(err, stats) {
+            if (stats && stats.isDirectory()) {
+              vfs.src(distPath)
+                .pipe(uploader(sftp, sftpConfig))
+                .on('data', function(data) {
+                  // console.log(data)
+                })
+                .on('end', function() {
+                  conn.end()
+                  // conn.close()
+                  fancyLog(chalk.magenta('sftp succeed.'))
+                })
+            } else {
+              fancyLog(chalk.red(`上传目录不存在`))
+              fancyLog(chalk.red(`请在服务器上先创建目录：${sftpConfig.remotePath}`))
               conn.end()
-              // conn.close()
-              fancyLog(chalk.magenta('sftp succeed.'))
-            })
+            }
+          })
         }
       })
-    })
-
-    conn.connect(connSettings)
+    }).on('error', function(err) {
+      if (err.errno === 'ENETUNREACH') {
+        fancyLog(chalk.red('请检查网络是否连接正常。'))
+      } else {
+        fancyLog(chalk.red('请确认使用SSH可以正常联通服务器。'))
+      }
+    }).connect(connSettings)
   }
 
   sftpUpload()
