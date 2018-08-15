@@ -56,6 +56,22 @@ const fezConfigDefault = {
       available: false,
       options: {}
     },
+
+    lessLoader: {
+      options: {
+        sourceMap: true
+      }
+    },
+    sassLoader: {
+      options: {
+        sourceMap: true
+      }
+    },
+    stylusLoader: {
+      options: {
+        sourceMap: true
+      }
+    }
   },
 
   svgSprite: {
