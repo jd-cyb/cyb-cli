@@ -56,7 +56,11 @@ const fezConfigDefault = {
       available: false,
       options: {}
     },
-
+    cssLoader: {
+      options: {
+        sourceMap: true
+      }
+    },
     lessLoader: {
       options: {
         sourceMap: true

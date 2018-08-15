@@ -96,10 +96,7 @@ const webpackConfig = {
           ...(isProduction ? [MiniCssExtractPlugin.loader] : [{ loader: 'style-loader' }]),
           {
             loader: 'css-loader',
-            options: {
-              url: true,
-              sourceMap: true
-            }
+            options: config.webpack.cssLoader.options
           },
           ...(checkPostcssConfig ? [{
             loader: 'postcss-loader',
@@ -117,9 +114,7 @@ const webpackConfig = {
             }
           }]), {
             loader: 'sass-loader',
-            options: {
-              sourceMap: true
-            }
+            options: config.webpack.sassLoader.options
           }
         ]
       },
@@ -129,10 +124,7 @@ const webpackConfig = {
           ...(isProduction ? [MiniCssExtractPlugin.loader] : [{ loader: 'style-loader' }]),
           {
             loader: 'css-loader',
-            options: {
-              url: true,
-              sourceMap: true
-            }
+            options: config.webpack.cssLoader.options
           }, ...(checkPostcssConfig ? [{
             loader: 'postcss-loader',
             options: {
@@ -149,9 +141,7 @@ const webpackConfig = {
             }
           }]), {
             loader: 'less-loader',
-            options: {
-              sourceMap: true
-            }
+            options: config.webpack.lessLoader.options
           }
         ]
       },
@@ -161,10 +151,7 @@ const webpackConfig = {
           ...(isProduction ? [MiniCssExtractPlugin.loader] : [{ loader: 'style-loader' }]),
           {
             loader: 'css-loader',
-            options: {
-              url: true,
-              sourceMap: true
-            }
+            options: config.webpack.cssLoader.options
           }, ...(checkPostcssConfig ? [{
             loader: 'postcss-loader',
             options: {
@@ -181,9 +168,7 @@ const webpackConfig = {
             }
           }]), {
             loader: 'stylus-loader',
-            options: {
-              sourceMap: true
-            }
+            options: config.webpack.stylusLoader.options
           }
         ]
       },
@@ -193,10 +178,7 @@ const webpackConfig = {
           ...(isProduction ? [MiniCssExtractPlugin.loader] : [{ loader: 'style-loader' }]),
           {
             loader: 'css-loader',
-            options: {
-              url: true,
-              sourceMap: true
-            }
+            options: config.webpack.cssLoader.options
           }, ...(checkPostcssConfig ? [{
             loader: 'postcss-loader',
             options: {
