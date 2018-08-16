@@ -57,12 +57,12 @@ const minFonts = (answers) => {
 module.exports = () => {
 
   if (!fontText) {
-    fancyLog.error(chalk.red('未在配置文件中配置文本信息。'))
+    fancyLog.error(chalk.red('No fontmin text in cyb.config.js'))
   } else {
     inquirer.prompt([{
         type: 'list',
         name: 'style',
-        message: '选择样式编译器：',
+        message: 'Select styles compiler:',
         choices: [{
           name: 'Sass',
           value: 'scss',

@@ -32,7 +32,7 @@ module.exports = () => {
   function delTest(cb) {
     del([config.paths.test.dir])
       .then(() => {
-        fancyLog(chalk.yellow('初始化本地测试目录...'))
+        fancyLog(chalk.yellow('Initialization test folder...'))
         cb()
       })
   }

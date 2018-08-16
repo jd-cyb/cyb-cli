@@ -25,7 +25,7 @@ module.exports = () => {
 
   fancyLog(chalk.magenta('Start zip...'))
 
-  const spinner = ora('启动 zip 压缩dist目录代码...').start()
+  const spinner = ora('启动 zip 压缩dist目录...').start()
 
   function zipDist(cb) {
     vfs.src(`${config.paths.dist.dir}/**/*`)

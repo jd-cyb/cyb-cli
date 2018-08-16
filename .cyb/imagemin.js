@@ -51,7 +51,7 @@ function imageMinAll(answers) {
 }
 
 function imageMinCustom(answers) {
-  const spinner = ora(chalk.yellow('启动图片压缩...')).start();
+  const spinner = ora(chalk.yellow('Compressing images...')).start();
 
   imagemin([...program.args], './', {
     plugins: [
@@ -64,9 +64,9 @@ function imageMinCustom(answers) {
       }))
     ]
   }).then(files => {
-    if (files.length === 0) return spinner.succeed(chalk.red('没有图片被压缩'))
+    if (files.length === 0) return spinner.succeed(chalk.red('No images'))
     for (let item of files) {
-      spinner.succeed(chalk.green(`成功压缩图片:${item.path}`))
+      spinner.succeed(chalk.green(`Images have been compressed in ${item.path}`))
     }
   })
 }

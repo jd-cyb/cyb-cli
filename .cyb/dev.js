@@ -102,7 +102,7 @@ module.exports = () => {
   function delDev(cb) {
     return del([config.paths.dev.dir])
       .then(() => {
-        fancyLog(chalk.yellow('初始化研发环境...'))
+        fancyLog(chalk.yellow('Initialization development folder...'))
         cb()
       })
   }
@@ -111,9 +111,10 @@ module.exports = () => {
    * 复制图片到研发目录
    */
   function copyImages(cb) {
+    if (!fs.existsSync(path.join(process.cwd(), config.paths.src.img))) return cb()
     copyHandler('img')
       .then(() => {
-        fancyLog(chalk.yellow('处理图片到研发目录...'))
+        fancyLog(chalk.yellow('Handled images...'))
         cb()
       })
   }
@@ -122,9 +123,10 @@ module.exports = () => {
    * 复制公共脚本到研发目录
    */
   function copyLib(cb = () => {}) {
+    if (!fs.existsSync(path.join(process.cwd(), config.paths.src.common))) return cb()
     copyHandler("common")
       .then(() => {
-        fancyLog(chalk.yellow('处理common公共Javascript脚本到研发目录...'))
+        fancyLog(chalk.yellow('Handled common javascript...'))
         cb()
       })
   }
@@ -133,9 +135,10 @@ module.exports = () => {
    * 复制字体到研发目录
    */
   function copyFonts(cb) {
+    if (!fs.existsSync(path.join(process.cwd(), config.paths.src.fonts))) return cb()
     copyHandler('fonts')
       .then(() => {
-        fancyLog(chalk.yellow('处理字体文件到研发目录...'))
+        fancyLog(chalk.yellow('Handled fonts...'))
         cb()
       })
   }
@@ -144,9 +147,10 @@ module.exports = () => {
    * 复制自定义文件到研发目录
    */
   function copyCustom(cb = () => {}) {
+    if (!fs.existsSync(path.join(process.cwd(), config.paths.src.custom))) return cb()
     copyHandler('custom')
       .then(() => {
-        fancyLog(chalk.yellow('处理custom自定义文件到研发目录...'))
+        fancyLog(chalk.yellow('Handled custom...'))
         cb()
       })
   }
@@ -155,9 +159,10 @@ module.exports = () => {
    * 复制vendor文件到研发目录
    */
   function copyVendor(cb = () => {}) {
+    if (!fs.existsSync(path.join(process.cwd(), config.paths.src.vendor))) return cb()
     copyHandler('vendor')
       .then(() => {
-        fancyLog(chalk.yellow('处理vendor文件到研发目录...'))
+        fancyLog(chalk.yellow('Handled vendor...'))
         cb()
       })
   }
@@ -183,7 +188,7 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.dev.css))
       .on('end', () => {
         reloadHandler()
-        fancyLog(chalk.yellow(`编译Css文件...`))
+        fancyLog(chalk.yellow(`Compiled Css...`))
         cb()
       })
   }
@@ -217,7 +222,7 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.dev.css))
       .on('end', () => {
         reloadHandler()
-        fancyLog(chalk.yellow(`编译Less文件...`))
+        fancyLog(chalk.yellow(`Compiled Less...`))
         cb()
       })
   }
@@ -258,7 +263,7 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.dev.css))
       .on('end', () => {
         reloadHandler()
-        fancyLog(chalk.yellow(`编译Sass文件...`))
+        fancyLog(chalk.yellow(`Compiled scss/sass...`))
         cb()
       })
   }
@@ -290,7 +295,7 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.dev.css))
       .on('end', () => {
         reloadHandler()
-        fancyLog(chalk.yellow(`编译Stylus文件...`))
+        fancyLog(chalk.yellow(`Compiled stylus...`))
         cb()
       })
   }
@@ -323,7 +328,7 @@ module.exports = () => {
       .pipe(cssFilter.restore)
       .pipe(vfs.dest(config.paths.dev.dir))
       .on('end', () => {
-        fancyLog(chalk.yellow('处理Bower文件到研发目录...'))
+        fancyLog(chalk.yellow('Handled bower files to dev...'))
         cb()
       })
   }
@@ -430,7 +435,7 @@ module.exports = () => {
    */
   function handleHtml(cb) {
     injectHtmlFiles().then(() => {
-      fancyLog(chalk.yellow('编译HTML并处理编译后的JS、CSS文件自动引用到HTML模板页面...'))
+      fancyLog(chalk.yellow('Handled html...'))
       cb()
     })
   }
@@ -505,19 +510,6 @@ module.exports = () => {
               copyHandler('fonts', path.join('**/', path.basename(file)))
             }
             break
-            /**
-             * 此处注释掉
-             * 公共脚本放入common目录
-             * 业务脚本放在views目录
-             */
-            // case 'js':
-            //     if (type === 'removed') {
-            //         const tmp = file.replace('src/', 'dev/')
-            //         del([tmp])
-            //     } else {
-            //         copyHandler('js', file)
-            //     }
-            //     break
 
           case 'styles':
 
@@ -555,15 +547,15 @@ module.exports = () => {
 
     watcher
       .on('change', (file) => {
-        fancyLog(`${file} 已被修改`)
+        fancyLog(`${file} have been changed.`)
         watchHandler('changed', file)
       })
       .on('add', (file) => {
-        fancyLog(`${file} 新文件已被添加`)
+        fancyLog(`${file} have been added.`)
         watchHandler('add', file)
       })
       .on('unlink', (file) => {
-        fancyLog(`${file} 已被删除`)
+        fancyLog(`${file} have been deleted.`)
         watchHandler('removed', file)
       })
 
@@ -635,11 +627,11 @@ module.exports = () => {
           ]
         }
       }, config.browsersync.dev.options))
-      fancyLog(chalk.yellow('启动本地研发服务器...'))
+      fancyLog(chalk.yellow('Start development server...'))
       cb()
     }
 
-    fancyLog(chalk.yellow('编译打包Javascript...'))
+    fancyLog(chalk.yellow('Compile javascript with webpack...'))
     compileJs.dev()
       .then(result => {
         startServer(result, cb)

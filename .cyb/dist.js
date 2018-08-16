@@ -56,7 +56,7 @@ const compileJs = require('./lib/webpack')
 module.exports = () => {
   console.time('dist')
   fancyLog(chalk.cyan('Start dist...'))
-
+  const spinner = ora()
   /**
    * postcss配置
    */
@@ -108,7 +108,7 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.img))
       .on('end', () => {
-        fancyLog(chalk.green('处理images目录中所有图片。'))
+        fancyLog(chalk.green('Images have been handled.'))
         cb()
       })
   }
@@ -136,7 +136,7 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.fonts))
       .on('end', () => {
-        fancyLog(chalk.green('处理fonts目录中所有字体文件。'))
+        fancyLog(chalk.green('Fonts have been handled.'))
         cb()
       })
   }
@@ -155,7 +155,7 @@ module.exports = () => {
     vfs.src(`${customPath}/**/*`)
       .pipe(vfs.dest(config.paths.tmp.custom))
       .on('end', () => {
-        fancyLog(chalk.green('处理custom目录中所有自定义文件。'))
+        fancyLog(chalk.green('Custom files have been handled.'))
         cb()
       })
   }
@@ -192,7 +192,7 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.css))
       .on('end', () => {
-        fancyLog(chalk.green(`完成编译CSS文件。`))
+        fancyLog(chalk.green(`Css have been compiled.`))
         cb()
       })
   }
@@ -232,7 +232,7 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.css))
       .on('end', () => {
-        fancyLog(chalk.green(`完成编译LESS文件。`))
+        fancyLog(chalk.green(`Less have been compiled.`))
         cb()
       })
   }
@@ -279,7 +279,7 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.css))
       .on('end', () => {
-        fancyLog(chalk.green(`完成编译SASS文件。`))
+        fancyLog(chalk.green(`Scss/Sass have been compiled.`))
         cb()
       })
   }
@@ -317,7 +317,7 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.css))
       .on('end', () => {
-        fancyLog(chalk.green(`完成编译Stylus文件。`))
+        fancyLog(chalk.green(`Stylus have been compiled.`))
         cb()
       })
   }
@@ -326,11 +326,11 @@ module.exports = () => {
    * 编译业务层js
    **/
   function handleJs(cb) {
-    const spinner = ora(chalk.yellow('编译打包Javascript...')).start()
+    spinner.start(chalk.yellow('Compile javascript with webpack...'))
     compileJs.dist()
       .then(() => {
         spinner.stop()
-        fancyLog(chalk.green('完成编译打包Javascript。'))
+        fancyLog(chalk.green('Javascript have been compiled.'))
         cb()
       })
       .catch((error) => {
@@ -410,7 +410,7 @@ module.exports = () => {
           del.sync(delFiles)
 
           if (fileIndex >= config.useInject.vendor.js.length) {
-            fancyLog(chalk.green('合并自定义配置的第三方框架库JS文件。'))
+            fancyLog(chalk.green('[custom bower javascript] have been merged.'))
             cb()
           }
         })
@@ -429,7 +429,7 @@ module.exports = () => {
       ))
       .pipe(vfs.dest(config.paths.tmp.appjs))
       .on('end', () => {
-        fancyLog(chalk.green('合并默认的第三方框架库JS文件。'))
+        fancyLog(chalk.green('[default bower javascript] have been merged.'))
         cb()
       })
   }
@@ -461,7 +461,7 @@ module.exports = () => {
           del.sync(delFiles)
 
           if (fileIndex >= config.useInject.vendor.css.length) {
-            fancyLog(chalk.green('合并自定义配置的第三方框架库样式文件。'))
+            fancyLog(chalk.green('[custom bower css] have been merged.'))
             cb()
           }
         })
@@ -482,7 +482,7 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.tmp.css))
       .on("end", () => {
         del.sync(['./tmp/bower'])
-        fancyLog(chalk.green('合并默认的第三方框架库样式文件。'))
+        fancyLog(chalk.green('[default bower css] have been merged.'))
         cb()
       })
   }
@@ -530,7 +530,7 @@ module.exports = () => {
           del.sync(delFiles)
 
           if (fileIndex >= config.useInject.common.js.length) {
-            fancyLog(chalk.green('合并自定义配置的common目录中公共JS文件。'))
+            fancyLog(chalk.green('[custom common javascript] have been merged.'))
             cb()
           }
         })
@@ -552,7 +552,7 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.tmp.appjs))
       .on("end", () => {
         del.sync(path.join(config.paths.tmp.common, `**/assign*.js`))
-        fancyLog(chalk.green('插入指定的common目录中的文件到html模板页面。'))
+        fancyLog(chalk.green('[assign common javascript] have been merged.'))
         cb()
       })
   }
@@ -573,7 +573,7 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.tmp.appjs))
       .on("end", () => {
         del.sync([config.paths.tmp.common])
-        fancyLog(chalk.green('合并默认的common目录中公共JS文件。'))
+        fancyLog(chalk.green('[default common javascript] have been merged.'))
         cb()
       })
   }
@@ -739,7 +739,7 @@ module.exports = () => {
       .pipe(indexHtmlFilter.restore)
       .pipe(vfs.dest(config.paths.tmp.html))
       .on("end", () => {
-        fancyLog(chalk.green('完成编译HTML并处理编译后的JS、CSS文件自动引用到HTML模板页面。'))
+        fancyLog(chalk.green('Html have been compiled.'))
         del(path.join(config.paths.tmp.appjs, 'manifest*.js'))
         cb()
       })
@@ -774,30 +774,7 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.dir))
       .on('end', () => {
-        fancyLog(chalk.green('完成添加所有静态资源CDN地址。'))
-        cb()
-      })
-  }
-
-  /**
-   * 替换样式中url的相对地址
-   **/
-  function cssReplaceUrl(cb) {
-
-    vfs.src([`${config.paths.tmp.dir}/**/*.css`])
-      .pipe(cdnify({
-        base: '',
-        rewriter: (url, process) => {
-          if (/(^(\/)?static)\/(.*?)\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac|woff2?|eot|ttf|otf)/.test(url)) {
-            url = url.replace(/((\/)?static\/)/, '../')
-            return url
-          } else {
-            return process(url)
-          }
-        }
-      }))
-      .pipe(vfs.dest(config.paths.tmp.dir))
-      .on('end', () => {
+        fancyLog(chalk.green('Cdn have been added to all files'))
         cb()
       })
   }
@@ -810,7 +787,7 @@ module.exports = () => {
 
     webp()
       .then(() => {
-        fancyLog(chalk.green('完成WebP编译。'))
+        fancyLog(chalk.green('WebP have been compiled.'))
         cb()
       })
   }
@@ -828,8 +805,33 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.dir))
       .on('end', () => {
-        fancyLog(chalk.green('生成所有静态资源MD5版本号。'))
+        fancyLog(chalk.green('Md5 have been added for all files.'))
         del(`${config.paths.tmp.dir}/**/rev-manifest.json`)
+        cb()
+      })
+  }
+
+  /**
+   * 替换样式中url的相对地址
+   **/
+  function cssReplaceUrl(cb) {
+    spinner.start(chalk.yellow('Replace address to relative for compatible mode.'))
+    vfs.src([`${config.paths.tmp.dir}/**/*.css`])
+      .pipe(cdnify({
+        base: '',
+        rewriter: (url, process) => {
+          if (/(^(\/)?static)\/(.*?)\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac|woff2?|eot|ttf|otf)/.test(url)) {
+            url = url.replace(/((\/)?static\/)/, '../')
+            return url
+          } else {
+            return process(url)
+          }
+        }
+      }))
+      .pipe(vfs.dest(config.paths.tmp.dir))
+      .on('end', () => {
+        spinner.stop()
+        fancyLog(chalk.yellow('Relative address have been replaced.'))
         cb()
       })
   }
@@ -847,7 +849,7 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.dist.dir))
       .on('end', () => {
         delTmp()
-        fancyLog(chalk.magenta(`发布代码到${config.paths.dist.dir}目录。`))
+        fancyLog(chalk.magenta(`Released code to ${config.paths.dist.dir}`))
         cb()
       })
   }
