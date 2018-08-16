@@ -80,7 +80,7 @@ module.exports = () => {
         middleware: [...(mockMiddleware())]
       },
       ui: {
-        port: 2018
+        port: 6700
       },
       port: 8080,
       startPath: '/',

@@ -614,7 +614,7 @@ module.exports = () => {
           ]
         },
         ui: {
-          port: 2018
+          port: 9700
         },
         port: 8080,
         startPath: '/',
