@@ -43,7 +43,7 @@ module.exports = () => {
   function qrcodeViewHtml(cb) {
     qrCode(config.paths.test.html)
       .then(() => {
-        fancyLog(chalk.yellow('统计所有HTML页面...'))
+        fancyLog(chalk.yellow('Find all html files...'))
         cb()
       })
   }
@@ -58,7 +58,7 @@ module.exports = () => {
       })
       .pipe(vfs.dest(config.paths.test.dir))
       .on('end', () => {
-        fancyLog(chalk.yellow('复制代码到测试目录...'))
+        fancyLog(chalk.yellow('Copy dist to test folder...'))
         cb()
       })
   }
@@ -123,9 +123,9 @@ module.exports = () => {
       if (err) {
         throw new Error(err);
       }
-      fancyLog(chalk.green('正在进入本地测试环境...'))
+      fancyLog(chalk.green('Enter the local test environment...'))
     })
   } else {
-    fancyLog(chalk.red('未找到dist发布目录！'))
+    fancyLog(chalk.red('No dist folder.'))
   }
 }
