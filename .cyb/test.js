@@ -20,6 +20,7 @@ const fancyLog = require('fancy-log')
 const chalk = require('chalk')
 const config = require('./lib/fezconfig')
 const qrCode = require('./lib/zindex')
+const mockMiddleware = require('./lib/mock-middleware')
 
 module.exports = () => {
   bs.create()
@@ -74,9 +75,12 @@ module.exports = () => {
       socket: {
         namespace: `/cyb-cli-test-${config.projectName}`
       },
-      server: config.paths.test.dir,
+      server: {
+        baseDir: config.paths.test.dir,
+        middleware: [...(mockMiddleware())]
+      },
       ui: {
-        port: 5050
+        port: 2018
       },
       port: 8080,
       startPath: '/',

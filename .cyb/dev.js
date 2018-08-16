@@ -46,6 +46,7 @@ const glob = require('glob')
 const config = require('./lib/fezconfig')
 const zIndex = require('./lib/zindex')
 const compileJs = require('./lib/webpack')
+const mockMiddleware = require('./lib/mock-middleware')
 
 module.exports = () => {
   fancyLog(chalk.magenta('Start dev...'))
@@ -597,7 +598,7 @@ module.exports = () => {
         },
         server: {
           baseDir: config.paths.dev.dir,
-          middleware: [
+          middleware: [...(mockMiddleware()),
             webpackDevMiddleware(webpackCompiled.compiler, {
               publicPath: webpackCompiled.webpackConfig.output.publicPath,
               watchOptions: {
@@ -613,7 +614,7 @@ module.exports = () => {
           ]
         },
         ui: {
-          port: 5050
+          port: 2018
         },
         port: 8080,
         startPath: '/',
