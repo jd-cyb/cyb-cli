@@ -35,13 +35,13 @@ const webpackConfig = {
    */
   resolve: {
     extensions: [".js", ".json"],
-    modules: [path.join(process.cwd(), "src"), path.join(__dirname, '../../../', 'node_modules'), path.join(process.cwd(), 'node_modules'), "node_modules"]
+    modules: [path.join(process.cwd(), 'node_modules'), path.join(__dirname, '../../../', 'node_modules'), path.join(process.cwd(), "src"), "node_modules"]
   },
   /**
    * loader解析
    */
   resolveLoader: {
-    modules: [path.join(__dirname, '../../../', 'node_modules'), path.join(process.cwd(), 'node_modules'), "node_modules"]
+    modules: [path.join(process.cwd(), 'node_modules'), path.join(__dirname, '../../../', 'node_modules'), "node_modules"]
   },
   module: {
     rules: [{
