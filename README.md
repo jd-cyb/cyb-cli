@@ -4,7 +4,8 @@
   </a>
   <br>
   <br>
-  <img src="https://img.shields.io/npm/v/cyb-cli.svg" alt="npm-version">
+  <a href="https://www.npmjs.com/package/cyb-cli">
+  <img src="https://img.shields.io/npm/v/cyb-cli.svg" alt="npm-version"></a>
   <br>
   <br>
   <img src="https://img.shields.io/npm/dm/cyb-cli.svg" alt="download-num">
@@ -75,12 +76,10 @@ demo-cyb
     │   └── styles           /／ 样式目录
     │       └── index.scss   /／ 首页样式文件
     └── views                /／ 业务逻辑存放目录
-        ├── index            /／ 首页目录
-        │   ├── index.html   /／ 首页Html文件
-        │   ├── index.js     /／ 首页业务逻辑脚本文件
-        │   └── module       /／ 首页模块目录
-        └── public           /／ 业务逻辑公共文件目录
-            └── module       /／ 公共模块目录
+        └── index            /／ 首页目录
+            ├── index.html   /／ 首页Html文件
+            ├── index.js     /／ 首页业务逻辑脚本文件
+            └── module       /／ 首页模块目录 (可自行定义)
 ```
 
 > CYB会帮助我们创建统一的项目结构，并且支持自行规划详细的模块级别的目录结构。创建项目会默认创建`index`页面。
