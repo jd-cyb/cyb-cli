@@ -8,6 +8,7 @@
 const webpack = require('webpack')
 const path = require('path')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const safeParser = require('postcss-safe-parser')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const outputPath = require('./output-path')
@@ -55,6 +56,7 @@ module.exports = {
     }
   },
   plugins: [
+    new ProgressBarPlugin(),
     //压缩css
     new OptimizeCSSPlugin({
       cssProcessorOptions: {

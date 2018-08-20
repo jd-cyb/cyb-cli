@@ -60,7 +60,7 @@ module.exports = () => {
   /**
    * postcss配置
    */
-  const postcssOption = [autoprefixer(Object.assign({}, config.style.autoprefixerOptions))]
+  const postcssOption = [autoprefixer(config.autoprefixer.options)]
 
 
   /**
@@ -68,7 +68,7 @@ module.exports = () => {
    */
   const bowerAvailable = () => {
 
-    if (!config.useInject.vendor.available) return false
+    if (!config.merge.vendor.available) return false
     if (!fs.existsSync(path.join(process.cwd(), 'bower_components'))) return false
     if (mainBowerFiles().length <= 0) return false
 
@@ -326,10 +326,10 @@ module.exports = () => {
    * 编译业务层js
    **/
   function handleJs(cb) {
-    spinner.start(chalk.yellow('Compile javascript with webpack...'))
+    fancyLog(chalk.yellow('Compile javascript with webpack...'))
     compileJs.dist()
       .then(() => {
-        spinner.stop()
+        // spinner.stop()
         fancyLog(chalk.green('Javascript have been compiled.'))
         cb()
       })
@@ -386,18 +386,15 @@ module.exports = () => {
   }
 
   function bowerCustomJs(cb) {
-    if (!bowerAvailable() || config.useInject.vendor.js.length === 0) return cb()
+    if (!bowerAvailable() || config.merge.vendor.js.length === 0) return cb()
 
     let fileIndex = 0
-    for (let [index, elem] of config.useInject.vendor.js.entries()) {
+    for (let [index, elem] of config.merge.vendor.js.entries()) {
       vfs.src('./tmp/bower/**/*.js')
         .pipe(filter(elem.contain))
         .pipe(concatOrder(elem.contain))
         .pipe(concatJs(`vendor-${index}-bower-${elem.target}`))
-        .pipe(gulpif(
-          config.useJsMin,
-          uglify()
-        ))
+        .pipe(uglify())
         .pipe(vfs.dest(config.paths.tmp.appjs))
         .on("end", () => {
           fileIndex++
@@ -409,7 +406,7 @@ module.exports = () => {
 
           del.sync(delFiles)
 
-          if (fileIndex >= config.useInject.vendor.js.length) {
+          if (fileIndex >= config.merge.vendor.js.length) {
             fancyLog(chalk.green('[custom bower javascript] have been merged.'))
             cb()
           }
@@ -423,10 +420,7 @@ module.exports = () => {
     vfs.src('./tmp/bower/**/*.js')
       .pipe(filter('**/*.js'))
       .pipe(concatJs('vendor-bower.js'))
-      .pipe(gulpif(
-        config.useJsMin,
-        uglify()
-      ))
+      .pipe(uglify())
       .pipe(vfs.dest(config.paths.tmp.appjs))
       .on('end', () => {
         fancyLog(chalk.green('[default bower javascript] have been merged.'))
@@ -435,11 +429,11 @@ module.exports = () => {
   }
 
   function bowerCustomCss(cb) {
-    if (!bowerAvailable() || config.useInject.vendor.css.length === 0) return cb()
+    if (!bowerAvailable() || config.merge.vendor.css.length === 0) return cb()
 
     let fileIndex = 0
 
-    for (let [index, elem] of config.useInject.vendor.css.entries()) {
+    for (let [index, elem] of config.merge.vendor.css.entries()) {
       vfs.src(`./tmp/bower/**/*.css`)
         .pipe(filter(elem.contain))
         .pipe(concatOrder(elem.contain))
@@ -460,7 +454,7 @@ module.exports = () => {
 
           del.sync(delFiles)
 
-          if (fileIndex >= config.useInject.vendor.css.length) {
+          if (fileIndex >= config.merge.vendor.css.length) {
             fancyLog(chalk.green('[custom bower css] have been merged.'))
             cb()
           }
@@ -504,19 +498,16 @@ module.exports = () => {
    * 根据 fez.config.js 配置项合并公共脚本
    **/
   function commonCustomJs(cb) {
-    if (!fs.existsSync(path.join(process.cwd(), config.paths.src.common)) || !config.useInject.common.available || config.useInject.common.js.length === 0) return cb()
+    if (!fs.existsSync(path.join(process.cwd(), config.paths.src.common)) || !config.merge.common.available || config.merge.common.js.length === 0) return cb()
 
     let fileIndex = 0
 
-    for (let [index, elem] of config.useInject.common.js.entries()) {
+    for (let [index, elem] of config.merge.common.js.entries()) {
       vfs.src([`${config.paths.tmp.common}/**/*.js`])
         .pipe(filter(elem.contain))
         .pipe(concatOrder(elem.contain))
         .pipe(concatJs(`common-${index}-browser-${elem.target}`))
-        .pipe(gulpif(
-          config.useJsMin,
-          uglify()
-        ))
+        .pipe(uglify())
         .pipe(vfs.dest(config.paths.tmp.appjs))
         .on("end", () => {
           fileIndex++
@@ -529,7 +520,7 @@ module.exports = () => {
 
           del.sync(delFiles)
 
-          if (fileIndex >= config.useInject.common.js.length) {
+          if (fileIndex >= config.merge.common.js.length) {
             fancyLog(chalk.green('[custom common javascript] have been merged.'))
             cb()
           }
@@ -545,10 +536,7 @@ module.exports = () => {
 
     vfs.src(`${config.paths.tmp.common}/**/assign*.js`)
       .pipe(flatten())
-      .pipe(gulpif(
-        config.useJsMin,
-        uglify()
-      ))
+      .pipe(uglify())
       .pipe(vfs.dest(config.paths.tmp.appjs))
       .on("end", () => {
         del.sync(path.join(config.paths.tmp.common, `**/assign*.js`))
@@ -566,10 +554,7 @@ module.exports = () => {
     vfs.src(`${config.paths.tmp.common}**/*.js`)
       .pipe(filter('**/*.js'))
       .pipe(concatJs('common-browser.js'))
-      .pipe(gulpif(
-        config.useJsMin,
-        uglify()
-      ))
+      .pipe(uglify())
       .pipe(vfs.dest(config.paths.tmp.appjs))
       .on("end", () => {
         del.sync([config.paths.tmp.common])
@@ -582,7 +567,6 @@ module.exports = () => {
    * 为bower和common统一添加版本号
    **/
   function reversionBCJs(cb) {
-    if (!config.useMd5.available) return cb()
 
     vfs.src(`${config.paths.tmp.appjs}/**/*.js`)
       .pipe(RevAll())
@@ -605,7 +589,6 @@ module.exports = () => {
    * 为bower和common统一添加版本号
    **/
   function reversionBCCss(cb) {
-    if (!config.useMd5.available) return cb()
 
     vfs.src(`${config.paths.tmp.css}/**/*.css`)
       .pipe(RevAll())
@@ -668,7 +651,7 @@ module.exports = () => {
     //公共文件注入
     const injectLibFiles = lazypipe()
       .pipe(() => {
-        return inject(vfs.src([`./tmp/static/css/**/${config.useInject.common.css}*.css`, `./tmp/static/js/**/common*.js`, `./tmp/static/js/**/common*.css`, `!./tmp/static/js/**/assign-*.js`], {
+        return inject(vfs.src([`./tmp/static/css/**/common*.css`, `./tmp/static/js/**/common*.js`, `./tmp/static/js/**/common*.css`, `!./tmp/static/js/**/assign-*.js`], {
           read: false
         }), {
           starttag: '<!-- inject:common:{{ext}} -->',
@@ -696,15 +679,15 @@ module.exports = () => {
         vfs.src(file.path)
           .pipe(rename(cateName + '.html'))
           .pipe(gulpif(
-            config.useInject.vendor.available,
+            config.merge.vendor.available,
             injectVendorFiles()
           ))
           .pipe(gulpif(
-            config.useInject.common.available,
+            config.merge.common.available,
             injectLibFiles()
           ))
           .pipe(gulpif(
-            config.useInject.page,
+            config.merge.page,
             inject(vfs.src([`./tmp/static/js/**/assign*-${cateName}*.js`, `./tmp/**/css/${cateName}.css`, `./tmp/**/css/${cateName}.*.css`, `./tmp/**/css/${cateName}/index.css`, `./tmp/static/js/**/${cateName}.js`, `./tmp/static/js/**/${cateName}.*.js`, `./tmp/**/js/${cateName}.css`], {
               read: false
             }), {
@@ -796,7 +779,6 @@ module.exports = () => {
    * 替换md5后缀的文件名
    */
   function reversionRepalce(cb) {
-    if (!config.useMd5.available) return cb()
 
     let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest.json`)
     vfs.src([`${config.paths.tmp.dir}/**/*`])
@@ -815,7 +797,7 @@ module.exports = () => {
    * 替换样式中url的相对地址
    **/
   function cssReplaceUrl(cb) {
-    spinner.start(chalk.yellow('Replace address to relative for compatible mode.'))
+    spinner.start(chalk.yellow('Replace address to relative...'))
     vfs.src([`${config.paths.tmp.dir}/**/*.css`])
       .pipe(cdnify({
         base: '',
@@ -831,7 +813,7 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.tmp.dir))
       .on('end', () => {
         spinner.stop()
-        fancyLog(chalk.yellow('Relative address have been replaced.'))
+        fancyLog(chalk.green('Relative address have been replaced.'))
         cb()
       })
   }

@@ -16,9 +16,6 @@ const path = require('path')
 const fs = require('fs')
 const _ = require('lodash')
 
-/**
- * fez 模块化工程框架默认配置
- */
 const fezConfigDefault = {
 
   /**
@@ -35,8 +32,8 @@ const fezConfigDefault = {
    */
   webpack: {
     /**
-     * webpack.config.js
-     * 根据需求场景每个项目均可安装loader及plugin
+     * 相当于webpack.config.js的配置功能
+     * 根据需求场景每个项目均可安装loader、plugin及个性化配置
      */
     config: {},
     /**
@@ -56,21 +53,33 @@ const fezConfigDefault = {
       available: false,
       options: {}
     },
+    /**
+     * css-loader配置
+     */
     cssLoader: {
       options: {
         sourceMap: true
       }
     },
+    /**
+     * less-loader配置
+     */
     lessLoader: {
       options: {
         sourceMap: true
       }
     },
+    /**
+     * sass-loader配置
+     */
     sassLoader: {
       options: {
         sourceMap: true
       }
     },
+    /**
+     * stylus-loader配置
+     */
     stylusLoader: {
       options: {
         sourceMap: true
@@ -78,6 +87,10 @@ const fezConfigDefault = {
     }
   },
 
+  /**
+   * 雪碧图配置
+   * 配置参考：https://github.com/kisenka/svg-sprite-loader#configuration
+   */
   svgSprite: {
     options: {
       publicPath: 'static/svg'
@@ -85,11 +98,21 @@ const fezConfigDefault = {
   },
 
   /**
+   * autoprefixer 配置
+   * 配置参考：https://github.com/postcss/autoprefixer#options
+   */
+  autoprefixer: {
+    options: {
+      browsers: ["> 1%", "last 2 versions", "not ie <= 8"]
+    }
+  },
+
+  /**
    * -------------------------------
-   * FEZmock配置
-   * @if MOCK
+   * 侵入式mock配置
+   * /* @if MOCK *\/
    * code...
-   * @endif
+   * /* @endif *\/
    * -------------------------------
    * 配置参考:
    * https://github.com/furic-zhao/fezmock/wiki
@@ -100,17 +123,9 @@ const fezConfigDefault = {
   },
 
   /**
-   * 使用eslint检测代码，具体配置可参考FEZ工程目录.eslintrc.js
-   * FEZ默认使用standard编码规则:https://github.com/standard/standard/blob/master/docs/RULES-zhcn.md
-   * 每个项目中的.eslintrc.js将覆盖FEZ工程目录中的.eslintrc.js配置
-   */
-  eslint: {
-    available: false
-  },
-
-  /**
    * -------------------------------
-   * 样式配置
+   * 样式编译器配置
+   * 仅适用于部署在src/static/styles目录中的样式
    * -------------------------------
    */
   style: {
@@ -130,15 +145,7 @@ const fezConfigDefault = {
      * stylus配置
      * https://github.com/stevelacy/gulp-stylus
      */
-    stylusOptions: {},
-
-    /**
-     * autoprefixer配置
-     * https://github.com/postcss/autoprefixer
-     */
-    autoprefixerOptions: {
-      browsers: ["> 1%", "last 2 versions", "not ie <= 8"]
-    }
+    stylusOptions: {}
   },
 
   /**
@@ -150,7 +157,7 @@ const fezConfigDefault = {
    */
   useREM: {
     css: {
-      available: false, //启用 css 中的 px => rem 转换 【包含less,sass】
+      available: false, //启用 样式中的 px => rem 转换
       /**
        * 配置参考:
        * https://github.com/cuth/postcss-pxtorem
@@ -169,19 +176,19 @@ const fezConfigDefault = {
 
   /**
    * -------------------------------
-   * 压缩src/static/images目录下png、jpg、jpeg、gif图片
+   * 图片压缩默认配置
    * -------------------------------
    */
   imagemin: {
     jpg: {
       /**
-       * jpg图片压缩质量
+       * jpg图片默认压缩质量
        */
       quality: 85
     },
     gif: {
       /**
-       * gif图片压缩质量
+       * gif图片默认压缩质量
        */
       optimizationLevel: 1
     },
@@ -223,13 +230,13 @@ const fezConfigDefault = {
 
   /**
    * -------------------------------
-   * 生产环境 启用CDN静态资源url替换
+   * 生产环境 启用添加CDN地址前缀
    * -------------------------------
    */
   useCdn: {
     available: false,
     extFile: 'css,html', // 替换CDN地址的文件扩展名
-    base: "//fezcdn.com/cdndemo/", // 默认CDN地址
+    base: "//cybcdn.com/cdndemo/", // 默认CDN地址
     // js: "http://js.fezcdn.com/", // 脚本CDN地址
     // css: "http://css.fezcdn.com/", // 样式CDN地址
     // images: "http://img.fezcdn.com/", // 图片CDN地址
@@ -252,24 +259,28 @@ const fezConfigDefault = {
 
   /**
    * -------------------------------
-   * HTML自动化注入
-   * 【支持自定义打包多个文件到一个文件】
-   * 【支持自定义打包单个文件】
-   * 【未配置的文件自动打包成一个文件】
-   * 【插入页面顺序以字母或数字降序排列-解决插入页面的脚本文件依赖关系】
-   * 【打包顺序以文件配置先后降序排列-解决打包文件间的依赖关系】
+   * 合并静态资源
+   * 仅适用于使用bower安装的第三方框架库资源
+   * 及部署在src/common目录中的项目公共脚本
+   * 【支持自定义合并多个文件到一个文件】
+   * 【支持自定义合并单个文件】
+   * 【未配置的文件合并打包成一个文件】
+   * 【插入页面顺序以配置顺序降序排列】
+   * 【合并顺序以文件配置先后降序排列】
    * -------------------------------
    */
-  useInject: {
-
+  merge: {
+    /**
+     * 用于合并使用bower安装的第三方框架库资源
+     */
     vendor: {
       available: true, //启用 vendor 文件自动化注入
 
       /**
        * 合并vendor脚本
        * {
-       *    target: '{排序序号}-vendor-{打包名称}.js',
-       *    contain: ['{文件1}.js', '{文件2}.js', '{文件3}.js']
+       *    target: '{打包名称}.js',
+       *    contain: ['**\/{文件1}.js', '**\/{文件2}.js', '**\/{文件3}.js']
        * }
        */
       js: [],
@@ -277,33 +288,26 @@ const fezConfigDefault = {
       /**
        * 合并vendor样式
        * {
-       *    target: '{排序序号}-vendor-{打包名称}.css',
-       *    contain: ['{文件1}.css', '{文件2}.css', '{文件3}.css']
+       *    target: '{打包名称}.css',
+       *    contain: ['**\/{文件1}.css', '**\/{文件2}.css', '**\/{文件3}.css']
        * }
        */
       css: []
     },
-
+    /**
+     * 用于合并部署在src/common目录中的项目公共资源
+     */
     common: {
       available: true, //启用 common 文件自动化注入
 
       /*
        * 合并common脚本
        * {
-       *    target: '{排序序号}-common-{打包名称}.js',
-       *    contain: ['{文件1}', '{文件2}', '{文件3}']
+       *    target: '{打包名称}.js',
+       *    contain: ['**\/{文件1}', '**\/{文件2}', '**\/{文件3}']
        * }
-       *
-       * 【支持单个文件指定注入到某些页面】
-       * （命名规则：assign-{页面名}-{页面名}-{文件名}
        */
-      js: [],
-
-      /**
-       * common命名的样式文件会注入到所有的页面
-       * src/staitc/styles/common-{文件名}.{less,scss,styl,css}
-       */
-      css: "*common*"
+      js: []
     },
 
     /**
@@ -312,52 +316,6 @@ const fezConfigDefault = {
      * src/views/{对应的页面目录名称}/index.js
      */
     page: true //启用 对应页面脚本和样式 自动化注入
-  },
-
-  /**
-   * -------------------------------
-   * Svg图标symblo形式使用配置
-   * -------------------------------
-   */
-  svgSymbol: {
-    available: false, //启用svg图标自动化symbol合并
-
-    /**
-     * 配置参考:
-     * https://github.com/Hiswe/gulp-svg-symbols#options
-     */
-    options: {
-      id: '%f',
-      class: '.%f'
-    }
-  },
-
-  /**
-   * -------------------------------
-   * 生产环境 启用增量编译
-   * -------------------------------
-   */
-  compileChanged: false,
-
-  /**
-   * -------------------------------
-   * 生产环境启用js压缩
-   * -------------------------------
-   */
-  useJsMin: true,
-
-  /**
-   * -------------------------------
-   * 生产环境生成md5版本号
-   * -------------------------------
-   */
-  useMd5: {
-    available: true,
-    /**
-     * 配置参考:
-     * https://github.com/smysnk/gulp-rev-all
-     */
-    options: {}
   },
 
   /**

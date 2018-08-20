@@ -82,14 +82,14 @@ module.exports = () => {
   /**
    * postcss插件配置
    */
-  const postcssOption = [postcssAutoprefixer(Object.assign({}, config.style.autoprefixerOptions))]
+  const postcssOption = [postcssAutoprefixer(config.autoprefixer.options)]
 
   /**
    * 检测bower是否可用
    */
   const bowerAvailable = () => {
 
-    if (!config.useInject.vendor.available) return false
+    if (!config.merge.vendor.available) return false
     if (!fs.existsSync(path.join(process.cwd(), 'bower_components'))) return false
     if (mainBowerFiles().length <= 0) return false
 
@@ -359,7 +359,7 @@ module.exports = () => {
        */
       const injectLib = lazypipe()
         .pipe(() => {
-          return inject(vfs.src([`./dev/static/css/**/${config.useInject.common.css}*.css`, `./dev/common/**/*.js`, `!./dev/common/**/assign-*.js`], {
+          return inject(vfs.src([`./dev/static/css/**/common*.css`, `./dev/common/**/*.js`, `!./dev/common/**/assign-*.js`], {
             read: false
           }), {
             starttag: '<!-- inject:common:{{ext}} -->',
@@ -384,11 +384,11 @@ module.exports = () => {
               injectBower()
             ))
             .pipe(gulpif(
-              config.useInject.common.available,
+              config.merge.common.available,
               injectLib()
             ))
             .pipe(gulpif(
-              config.useInject.page,
+              config.merge.page,
               inject(vfs.src([`./dev/common/**/assign*-${cateName}*.js`, `./dev/**/css/${cateName}.css`, `./dev/**/css/${cateName}/index.css`, `./dev/**/js/${cateName}.js`], {
                 read: false
               }), {

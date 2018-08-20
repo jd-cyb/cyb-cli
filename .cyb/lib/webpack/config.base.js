@@ -71,7 +71,6 @@ const webpackConfig = {
           outputPath: outputPath.images()
         }
       },
-
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
         loader: 'url-loader',
@@ -109,7 +108,7 @@ const webpackConfig = {
               ident: 'postcss',
               plugins: (loader) => [
                 ...(config.useREM.css.available ? [postcssPxtorem(Object.assign({}, config.useREM.css.options))] : []),
-                require('autoprefixer')(Object.assign({}, config.style.autoprefixerOptions))
+                require('autoprefixer')(config.autoprefixer.options)
               ]
             }
           }]), {
@@ -136,7 +135,7 @@ const webpackConfig = {
               ident: 'postcss',
               plugins: (loader) => [
                 ...(config.useREM.css.available ? [postcssPxtorem(Object.assign({}, config.useREM.css.options))] : []),
-                require('autoprefixer')(Object.assign({}, config.style.autoprefixerOptions))
+                require('autoprefixer')(config.autoprefixer.options)
               ]
             }
           }]), {
@@ -163,7 +162,7 @@ const webpackConfig = {
               ident: 'postcss',
               plugins: (loader) => [
                 ...(config.useREM.css.available ? [postcssPxtorem(Object.assign({}, config.useREM.css.options))] : []),
-                require('autoprefixer')(Object.assign({}, config.style.autoprefixerOptions))
+                require('autoprefixer')(config.autoprefixer.options)
               ]
             }
           }]), {
@@ -190,7 +189,7 @@ const webpackConfig = {
               ident: 'postcss',
               plugins: (loader) => [
                 ...(config.useREM.css.available ? [postcssPxtorem(Object.assign({}, config.useREM.css.options))] : []),
-                require('autoprefixer')(Object.assign({}, config.style.autoprefixerOptions))
+                require('autoprefixer')(config.autoprefixer.options)
               ]
             }
           }])

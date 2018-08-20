@@ -58,7 +58,7 @@ module.exports = {
               const info = stats.toJson()
               // info.errors 错误详情
               if (stats.hasErrors()) {
-                fancyLog.error(chalk.red(info.errors))
+                fancyLog.error(chalk.red('语法错误、或缺失module'))
               }
             });
 
