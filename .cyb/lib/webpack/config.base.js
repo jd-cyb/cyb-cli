@@ -67,7 +67,7 @@ const webpackConfig = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: isProduction ? '[name].[hash].[ext]' : '[name].[ext]',
+          name: isProduction ? '[name].[hash:8].[ext]' : '[name].[ext]',
           outputPath: outputPath.images()
         }
       },
@@ -76,7 +76,7 @@ const webpackConfig = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: isProduction ? '[name].[hash].[ext]' : '[name].[ext]',
+          name: isProduction ? '[name].[hash:8].[ext]' : '[name].[ext]',
           outputPath: outputPath.media()
         }
       },
@@ -85,7 +85,7 @@ const webpackConfig = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: isProduction ? '[name].[hash].[ext]' : '[name].[ext]',
+          name: isProduction ? '[name].[hash:8].[ext]' : '[name].[ext]',
           outputPath: outputPath.fonts()
         }
       },
@@ -203,8 +203,8 @@ const webpackConfig = {
      * 提取后的文件将会被保存在dist/static/js/目录
      */
     ...(isProduction ? [new MiniCssExtractPlugin({
-      filename: path.join(outputPath.css(), '[name].[hash].css'),
-      chunkFilename: path.join(outputPath.css(), '[name].[hash].css')
+      filename: path.join(outputPath.css(), '[name].[contenthash:8].css'),
+      chunkFilename: path.join(outputPath.css(), '[name].[contenthash:8].css')
     })] : []),
 
     /**

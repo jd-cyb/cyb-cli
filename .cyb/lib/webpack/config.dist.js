@@ -18,8 +18,8 @@ module.exports = {
   mode: 'production',
   output: {
     path: outputPath.dist(),
-    filename: '[name].[hash].js',
-    chunkFilename: path.join(outputPath.js(), '[name].[hash].js')
+    filename: '[name].[chunkhash:8].js',
+    chunkFilename: path.join(outputPath.js(), '[name].[chunkhash:8].js')
   },
   module: {
     rules: [{
@@ -70,7 +70,7 @@ module.exports = {
     ...(config.webpack.analyzer.available ? [new BundleAnalyzerPlugin(config.webpack.options)] : []),
     new webpack.BannerPlugin('@2018 塞伯坦-CYB前端模块化工程构建工具\nhttps://github.com/jd-cyb/cyb-cli'),
     // 根据模块的相对路径生成一个四位数的hash作为模块id
-    new webpack.HashedModuleIdsPlugin(),
+    new webpack.HashedModuleIdsPlugin({ hashDigest: 'hex' }),
     // enable scope hoisting
     new webpack.optimize.ModuleConcatenationPlugin()
   ]

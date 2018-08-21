@@ -19,6 +19,7 @@ module.exports = {
     publicPath: '/'
   },
   plugins: [
+    new webpack.ProgressPlugin(),
     new webpack.HotModuleReplacementPlugin()
   ],
   module: {

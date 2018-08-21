@@ -49,7 +49,7 @@ const compileJs = require('./lib/webpack')
 const mockMiddleware = require('./lib/mock-middleware')
 
 module.exports = () => {
-  fancyLog(chalk.magenta('Start dev...'))
+  fancyLog(chalk.magenta('Starting development server...'))
 
   bs.create()
 
@@ -102,7 +102,7 @@ module.exports = () => {
   function delDev(cb) {
     return del([config.paths.dev.dir])
       .then(() => {
-        fancyLog(chalk.yellow('Initialization development folder...'))
+        // fancyLog(chalk.yellow('Initialization development folder...'))
         cb()
       })
   }
@@ -627,11 +627,11 @@ module.exports = () => {
           ]
         }
       }, config.browsersync.dev.options))
-      fancyLog(chalk.yellow('Start development server...'))
+      // fancyLog(chalk.yellow('Start development server...'))
       cb()
     }
 
-    fancyLog(chalk.yellow('Compile javascript with webpack...'))
+    // fancyLog(chalk.yellow('Compile javascript with webpack...'))
     compileJs.dev()
       .then(result => {
         startServer(result, cb)
