@@ -46,12 +46,11 @@ const glob = require('glob')
 const config = require('./lib/fezconfig')
 const zIndex = require('./lib/zindex')
 const compileJs = require('./lib/webpack')
-const mockMiddleware = require('./lib/mock-middleware')
 
 module.exports = () => {
-  fancyLog(chalk.magenta('Starting development server...'))
+  console.log(chalk.cyan('Starting dev for development...'))
 
-  bs.create()
+  bs.create('cyb dev')
 
   /**
    * 调用browsersync自动刷新浏览器
@@ -102,7 +101,6 @@ module.exports = () => {
   function delDev(cb) {
     return del([config.paths.dev.dir])
       .then(() => {
-        // fancyLog(chalk.yellow('Initialization development folder...'))
         cb()
       })
   }
@@ -114,7 +112,6 @@ module.exports = () => {
     if (!fs.existsSync(path.join(process.cwd(), config.paths.src.img))) return cb()
     copyHandler('img')
       .then(() => {
-        fancyLog(chalk.yellow('Handled images...'))
         cb()
       })
   }
@@ -126,7 +123,6 @@ module.exports = () => {
     if (!fs.existsSync(path.join(process.cwd(), config.paths.src.common))) return cb()
     copyHandler("common")
       .then(() => {
-        fancyLog(chalk.yellow('Handled common javascript...'))
         cb()
       })
   }
@@ -138,7 +134,6 @@ module.exports = () => {
     if (!fs.existsSync(path.join(process.cwd(), config.paths.src.fonts))) return cb()
     copyHandler('fonts')
       .then(() => {
-        fancyLog(chalk.yellow('Handled fonts...'))
         cb()
       })
   }
@@ -150,7 +145,6 @@ module.exports = () => {
     if (!fs.existsSync(path.join(process.cwd(), config.paths.src.custom))) return cb()
     copyHandler('custom')
       .then(() => {
-        fancyLog(chalk.yellow('Handled custom...'))
         cb()
       })
   }
@@ -162,7 +156,6 @@ module.exports = () => {
     if (!fs.existsSync(path.join(process.cwd(), config.paths.src.vendor))) return cb()
     copyHandler('vendor')
       .then(() => {
-        fancyLog(chalk.yellow('Handled vendor...'))
         cb()
       })
   }
@@ -188,7 +181,6 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.dev.css))
       .on('end', () => {
         reloadHandler()
-        fancyLog(chalk.yellow(`Compiled Css...`))
         cb()
       })
   }
@@ -222,7 +214,6 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.dev.css))
       .on('end', () => {
         reloadHandler()
-        fancyLog(chalk.yellow(`Compiled Less...`))
         cb()
       })
   }
@@ -263,7 +254,6 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.dev.css))
       .on('end', () => {
         reloadHandler()
-        fancyLog(chalk.yellow(`Compiled scss/sass...`))
         cb()
       })
   }
@@ -295,7 +285,6 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.dev.css))
       .on('end', () => {
         reloadHandler()
-        fancyLog(chalk.yellow(`Compiled stylus...`))
         cb()
       })
   }
@@ -328,7 +317,6 @@ module.exports = () => {
       .pipe(cssFilter.restore)
       .pipe(vfs.dest(config.paths.dev.dir))
       .on('end', () => {
-        fancyLog(chalk.yellow('Handled bower files to dev...'))
         cb()
       })
   }
@@ -435,7 +423,6 @@ module.exports = () => {
    */
   function handleHtml(cb) {
     injectHtmlFiles().then(() => {
-      fancyLog(chalk.yellow('Handled html...'))
       cb()
     })
   }
@@ -589,26 +576,30 @@ module.exports = () => {
           namespace: `/cyb-cli-dev-${config.projectName}`
         },
         server: {
-          baseDir: config.paths.dev.dir,
-          middleware: [...(mockMiddleware()),
-            webpackDevMiddleware(webpackCompiled.compiler, {
-              publicPath: webpackCompiled.webpackConfig.output.publicPath,
-              watchOptions: {
-                ignored: /node_modules/
-              },
-              logLevel: 'silent',
-              stats: {
-                context: path.relative(__dirname, '../'),
-                colors: true
-              }
-            }),
-            webpackHotMiddleware(webpackCompiled.compiler)
-          ]
+          baseDir: config.paths.dev.dir
         },
-        ui: {
-          port: 9700
+        middleware: [
+          webpackDevMiddleware(webpackCompiled.compiler, {
+            publicPath: webpackCompiled.webpackConfig.output.publicPath,
+            watchOptions: {
+              ignored: /node_modules/
+            },
+            logLevel: 'silent',
+            stats: {
+              context: path.relative(__dirname, '../'),
+              colors: true
+            }
+          }),
+          webpackHotMiddleware(webpackCompiled.compiler)
+        ],
+        callbacks: {
+          ready: function(err, bs) {
+
+            require('./lib/mock-middleware')().filter((item) => {
+              bs.addMiddleware(item.route, item.handle)
+            })
+          }
         },
-        port: 8080,
         startPath: '/',
         notify: { //提醒条样式
           styles: [
@@ -626,12 +617,11 @@ module.exports = () => {
             "text-align: center"
           ]
         }
-      }, config.browsersync.dev.options))
-      // fancyLog(chalk.yellow('Start development server...'))
-      cb()
+      }, config.browsersync.dev.options), () => {
+        cb()
+      })
     }
 
-    // fancyLog(chalk.yellow('Compile javascript with webpack...'))
     compileJs.dev()
       .then(result => {
         startServer(result, cb)
