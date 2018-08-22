@@ -23,16 +23,14 @@ const ora = require('ora')
 
 module.exports = () => {
 
-  fancyLog(chalk.magenta('Start zip...'))
-
-  const spinner = ora('启动 zip 压缩dist目录...').start()
+  const spinner = ora('Starting zip...').start()
 
   function zipDist(cb) {
     vfs.src(`${config.paths.dist.dir}/**/*`)
       .pipe(zip('dist.zip'))
       .pipe(vfs.dest('./'))
       .on('end', () => {
-        spinner.succeed(chalk.green('成功生成 dist.zip'))
+        spinner.succeed(chalk.green('dist.zip is created.'))
         cb()
       })
   }
@@ -44,7 +42,7 @@ module.exports = () => {
       return zipDist(cb)
     } else {
       spinner.stop()
-      fancyLog(chalk.red('未找到dist发布目录！'))
+      fancyLog(chalk.red(`No ${config.paths.dist.dir}`))
       cb()
     }
   }
@@ -57,6 +55,6 @@ module.exports = () => {
     if (err) {
       throw new Error(err)
     }
-    fancyLog(chalk.magenta('Completed zip.'))
+    fancyLog(chalk.magenta('Zip is completed.'))
   })
 }

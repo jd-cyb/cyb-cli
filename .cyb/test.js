@@ -23,7 +23,7 @@ const qrCode = require('./lib/zindex')
 const mockMiddleware = require('./lib/mock-middleware')
 
 module.exports = () => {
-  bs.create()
+  bs.create('cyb test')
 
   fancyLog(chalk.cyan('Start test...'))
   /**

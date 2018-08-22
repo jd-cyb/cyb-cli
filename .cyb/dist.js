@@ -49,14 +49,14 @@ const vfs = require('vinyl-fs')
 const async = require('async')
 const glob = require('glob')
 const ora = require('ora')
+const distReport = require('./lib/report')
 const config = require('./lib/fezconfig')
 const webp = require('./lib/webp')
 const compileJs = require('./lib/webpack')
 
 module.exports = () => {
-  console.time('dist')
-  fancyLog(chalk.cyan('Start dist...'))
-  const spinner = ora()
+  let startTime = new Date
+  fancyLog(chalk.cyan('Starting dist for production...'))
   /**
    * postcss配置
    */
@@ -326,7 +326,7 @@ module.exports = () => {
    * 编译业务层js
    **/
   function handleJs(cb) {
-    fancyLog(chalk.yellow('Compile javascript with webpack...'))
+    fancyLog(chalk.yellow('Compiling javascript with webpack...'))
     compileJs.dist()
       .then(() => {
         // spinner.stop()
@@ -797,7 +797,7 @@ module.exports = () => {
    * 替换样式中url的相对地址
    **/
   function cssReplaceUrl(cb) {
-    spinner.start(chalk.yellow('Replace address to relative...'))
+    const spinner = ora('Replacing address to relative...').start()
     vfs.src([`${config.paths.tmp.dir}/**/*.css`])
       .pipe(cdnify({
         base: '',
@@ -813,7 +813,7 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.tmp.dir))
       .on('end', () => {
         spinner.stop()
-        fancyLog(chalk.green('Relative address have been replaced.'))
+        fancyLog(chalk.green('All files has been replaced with relative address.'))
         cb()
       })
   }
@@ -831,7 +831,8 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.dist.dir))
       .on('end', () => {
         delTmp()
-        fancyLog(chalk.magenta(`Released code to ${config.paths.dist.dir}`))
+        console.log(distReport(config.paths.dist.dir))
+        fancyLog(chalk.magenta(`The ${config.paths.dist.dir} directory is ready to be deployed.`))
         cb()
       })
   }
@@ -987,7 +988,7 @@ module.exports = () => {
     if (err) {
       throw new Error(err)
     }
-    fancyLog(chalk.cyan('Release succeed.'))
-    console.timeEnd('dist')
+    const buildTime = (new Date() - startTime) / 1000 + 's';
+    fancyLog(chalk.green.bold(`Dist completed in ${buildTime}`))
   })
 }
