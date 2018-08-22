@@ -46,22 +46,6 @@ module.exports = {
 
             let compiler = webpack(webpackConfig)
 
-            const watching = compiler.watch({
-              // watchOptions 示例
-              aggregateTimeout: 300,
-              poll: undefined
-            }, (err, stats) => {
-              //致命的 wepback 错误（配置出错等）
-              if (err) throw err
-
-              //编译错误（缺失的 module，语法错误等）
-              const info = stats.toJson()
-              // info.errors 错误详情
-              if (stats.hasErrors()) {
-                fancyLog.error(chalk.red('语法错误、或缺失module'))
-              }
-            });
-
             resolve({
               compiler: compiler,
               webpackConfig: webpackConfig
@@ -99,7 +83,7 @@ module.exports = {
                 return (
                   module.resource &&
                   new RegExp(`node_modules\/(${item.chunk.join('|')})\/(.*)\.js$`).test(module.resource)
-                );
+                )
               }
             }
           }
