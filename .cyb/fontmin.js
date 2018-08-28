@@ -22,41 +22,59 @@ const async = require('async')
 const inquirer = require('inquirer')
 const config = require('./lib/fezconfig')
 
-const fontText = config.fontmin.text
+// let creatFiles = []
 
-const minFonts = (answers) => {
-  fancyLog(chalk.magenta('Start fontmin...'))
+const isEmpty = (value) => {
+  return (Array.isArray(value) && value.length === 0) || (Object.prototype.isPrototypeOf(value) && Object.keys(value).length === 0)
+}
 
-  let creatFiles = []
-
+const taskFontmin = (answers, elem, cb) => {
   const cssFilter = filter('**/*.css', {
     restore: true
   })
-
-  vfs.src(`./src/static/ttf/*.ttf`)
+  vfs.src(`./src/static/ttf/**/${elem.ttf}`)
     .pipe(fontMin({
-      text: fontText,
-      quiet: true,
+      text: elem.text,
+      verbose: true,
+      cssExt: answers.style,
       fontPath: '../fonts/'
     }))
     .pipe(cssFilter)
     .pipe(rename({ extname: `.${answers.style}` }))
     .pipe(cssFilter.restore)
     .pipe(vfs.dest('./src/static/fonts/'))
-    .on('data', (file) => {
-      creatFiles.push(path.basename(file.history[1].replace('.css', `.${answers.style}`)))
-    })
     .on('end', () => {
-      for (let item of creatFiles) {
-        fancyLog(chalk.green(`Create succeed: src/static/fonts/${item}`))
-      }
-      fancyLog(chalk.magenta('Completed fontmin.'))
+      cb()
     })
 }
 
-module.exports = () => {
+const minFonts = (answers) => {
+  fancyLog(chalk.magenta('Start fontmin...'))
+  if (Object.prototype.toString.call(config.fontmin) === "[object Array]") {
+    let index = 1
+    for (let elem of config.fontmin) {
+      taskFontmin(answers, {
+        ttf: elem.ttf,
+        text: elem.text
+      }, () => {
+        index++
+        if (index === config.fontmin.length) {
+          fancyLog(chalk.magenta('Completed fontmin.'))
+        }
+      })
+    }
+  } else if (Object.prototype.toString.call(config.fontmin) === "[object Object]") {
+    taskFontmin(answers, {
+      ttf: '*.ttf',
+      text: config.fontmin.text
+    }, () => {
+      fancyLog(chalk.magenta('Completed fontmin.'))
+    })
+  }
+}
 
-  if (!fontText) {
+module.exports = () => {
+  if (isEmpty(config.fontmin)) {
     fancyLog.error(chalk.red('No fontmin text in cyb.config.js'))
   } else {
     inquirer.prompt([{
