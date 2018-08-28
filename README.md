@@ -190,6 +190,6 @@ WIKI:[https://github.com/jd-cyb/cyb-cli/wiki](https://github.com/jd-cyb/cyb-cli/
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2018, 京东商城-基础平台研发部-[CYB前端小组](https://github.com/jd-cyb)
+Copyright (c) 2018, 京东-基础业务研发部-前端架构组-[塞伯坦前端小组](https://github.com/jd-cyb)
 
 
