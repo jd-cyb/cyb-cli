@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://cyb.jd.com" target="_blank">
+  <a href="http://cyb.hestudy.com" target="_blank">
     <img width="200" src="./.cyb/lib/cyb-logo.png">
   </a>
   <br>
@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/npm/dm/cyb-cli.svg" alt="download-num">
   <img src="https://img.shields.io/badge/node-%3E=6.11.5-brightgreen.svg" alt="node">
   <img src="https://img.shields.io/npm/l/cyb-cli.svg" alt="license">
-  <img src="https://img.shields.io/badge/platform-MacOS%7CLinux%7CWindow-lightgrey.svg" alt="platform">
+  <img src="https://img.shields.io/badge/platform-MacOS%7CLinux%7CWindows-lightgrey.svg" alt="platform">
   <br>
 </p>
 
@@ -190,6 +190,6 @@ WIKI:[https://github.com/jd-cyb/cyb-cli/wiki](https://github.com/jd-cyb/cyb-cli/
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2018, 京东-基础业务研发部-前端架构组-[塞伯坦前端小组](https://github.com/jd-cyb)
+Copyright (c) 2018, [塞伯坦前端小组](https://github.com/jd-cyb)
 
 
