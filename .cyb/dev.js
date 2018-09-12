@@ -50,8 +50,6 @@ const compileJs = require('./lib/webpack')
 module.exports = () => {
   console.log(chalk.cyan('Starting dev for development...'))
 
-  bs.create('cyb dev')
-
   /**
    * 调用browsersync自动刷新浏览器
    */
@@ -99,7 +97,7 @@ module.exports = () => {
    * 删除开发目录
    */
   function delDev(cb) {
-    return del([config.paths.dev.dir])
+    del([config.paths.dev.dir])
       .then(() => {
         cb()
       })
@@ -445,13 +443,13 @@ module.exports = () => {
           if (type === 'removed') {
             del([`${config.paths.dev.dir}/**/${removeFiles}.html`, `${config.paths.dev.dir}/**/${removeFiles}.js`]).then(() => {
               setTimeout(function() {
-                qrcodeViewHtml()
+                findAllHtml()
               }, 500)
             })
           } else if (type === 'add') {
             injectHtmlFiles(file).then(() => {
               setTimeout(function() {
-                qrcodeViewHtml()
+                findAllHtml()
               }, 500)
             })
           } else {
@@ -550,9 +548,9 @@ module.exports = () => {
   }
 
   /**
-   * 研发环境生成二维码方便在移动端浏览测试
+   * 罗列所有html页面
    */
-  function qrcodeViewHtml(cb = () => {}) {
+  function findAllHtml(cb = () => {}) {
     zIndex()
       .then(() => {
         cb()
@@ -568,6 +566,7 @@ module.exports = () => {
      * 配置参考：http://www.browsersync.cn/docs/options/
      */
     const startServer = (webpackCompiled, cb) => {
+      bs.create('cyb dev')
       bs.init(Object.assign({
         //在Chrome浏览器中打开网站
         // open: "external",
@@ -697,7 +696,7 @@ module.exports = () => {
           watch(cb)
         },
         function(cb) {
-          qrcodeViewHtml(cb)
+          findAllHtml(cb)
         },
         function(cb) {
           handleJs(cb)

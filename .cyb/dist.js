@@ -56,7 +56,7 @@ const compileJs = require('./lib/webpack')
 
 module.exports = () => {
   let startTime = new Date
-  fancyLog(chalk.cyan('Starting dist for production...'))
+  const spinner = ora(chalk.cyan('Starting dist for production...')).start()
   /**
    * postcss配置
    */
@@ -108,7 +108,6 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.img))
       .on('end', () => {
-        fancyLog(chalk.green('Images have been handled.'))
         cb()
       })
   }
@@ -136,7 +135,6 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.fonts))
       .on('end', () => {
-        fancyLog(chalk.green('Fonts have been handled.'))
         cb()
       })
   }
@@ -155,7 +153,6 @@ module.exports = () => {
     vfs.src(`${customPath}/**/*`)
       .pipe(vfs.dest(config.paths.tmp.custom))
       .on('end', () => {
-        fancyLog(chalk.green('Custom files have been handled.'))
         cb()
       })
   }
@@ -165,6 +162,8 @@ module.exports = () => {
    **/
   function compileCss(cb) {
     if (glob.sync(`${config.paths.src.styles}/*.css`).length === 0) return cb()
+
+    let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest.json`)
 
     vfs.src(`${config.paths.src.styles}/*.css`)
       //css中的rem转换
@@ -179,6 +178,20 @@ module.exports = () => {
         config.useCssMin.available,
         minifyCSS(config.useCssMin.options)
       ))
+      .pipe(RevReplace({
+        manifest: manifest
+      }))
+      .pipe(cdnify({
+        base: '',
+        rewriter: (url, process) => {
+          if (/(^(\/)?static)\/(.*?)\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac|woff2?|eot|ttf|otf)/.test(url)) {
+            url = url.replace(/((\/)?static\/)/, '../')
+            return url
+          } else {
+            return process(url)
+          }
+        }
+      }))
       .pipe(vfs.dest(config.paths.tmp.css))
       .pipe(RevAll())
       .pipe(revFormat({
@@ -192,7 +205,6 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.css))
       .on('end', () => {
-        fancyLog(chalk.green(`Css have been compiled.`))
         cb()
       })
   }
@@ -202,6 +214,8 @@ module.exports = () => {
    **/
   function compileLess(cb) {
     if (glob.sync(`${config.paths.src.styles}/*.less`).length === 0) return cb()
+
+    let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest.json`)
 
     vfs.src(`${config.paths.src.styles}/*.less`)
       .pipe(less(Object.assign({
@@ -219,6 +233,20 @@ module.exports = () => {
         config.useCssMin.available,
         minifyCSS(config.useCssMin.options)
       ))
+      .pipe(RevReplace({
+        manifest: manifest
+      }))
+      .pipe(cdnify({
+        base: '',
+        rewriter: (url, process) => {
+          if (/(^(\/)?static)\/(.*?)\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac|woff2?|eot|ttf|otf)/.test(url)) {
+            url = url.replace(/((\/)?static\/)/, '../')
+            return url
+          } else {
+            return process(url)
+          }
+        }
+      }))
       .pipe(vfs.dest(config.paths.tmp.css))
       .pipe(RevAll())
       .pipe(revFormat({
@@ -232,7 +260,6 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.css))
       .on('end', () => {
-        fancyLog(chalk.green(`Less have been compiled.`))
         cb()
       })
   }
@@ -242,6 +269,8 @@ module.exports = () => {
    **/
   function compileSass(cb) {
     if (glob.sync(`${config.paths.src.styles}/*.{scss,sass}`).length === 0) return cb()
+
+    let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest.json`)
 
     vfs.src(`${config.paths.src.styles}/*.{scss,sass}`)
       .pipe(sass(Object.assign({
@@ -266,6 +295,20 @@ module.exports = () => {
         config.useCssMin.available,
         minifyCSS(config.useCssMin.options)
       ))
+      .pipe(RevReplace({
+        manifest: manifest
+      }))
+      .pipe(cdnify({
+        base: '',
+        rewriter: (url, process) => {
+          if (/(^(\/)?static)\/(.*?)\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac|woff2?|eot|ttf|otf)/.test(url)) {
+            url = url.replace(/((\/)?static\/)/, '../')
+            return url
+          } else {
+            return process(url)
+          }
+        }
+      }))
       .pipe(vfs.dest(config.paths.tmp.css))
       .pipe(RevAll())
       .pipe(revFormat({
@@ -279,7 +322,6 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.css))
       .on('end', () => {
-        fancyLog(chalk.green(`Scss/Sass have been compiled.`))
         cb()
       })
   }
@@ -289,6 +331,8 @@ module.exports = () => {
    **/
   function compileStylus(cb) {
     if (glob.sync(`${config.paths.src.styles}/*.styl`).length === 0) return cb()
+
+    let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest.json`)
 
     vfs.src(`${config.paths.src.styles}/*.styl`)
       .pipe(stylus(Object.assign({}, config.style.stylusOptions)))
@@ -304,6 +348,20 @@ module.exports = () => {
         config.useCssMin.available,
         minifyCSS(config.useCssMin.options)
       ))
+      .pipe(RevReplace({
+        manifest: manifest
+      }))
+      .pipe(cdnify({
+        base: '',
+        rewriter: (url, process) => {
+          if (/(^(\/)?static)\/(.*?)\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac|woff2?|eot|ttf|otf)/.test(url)) {
+            url = url.replace(/((\/)?static\/)/, '../')
+            return url
+          } else {
+            return process(url)
+          }
+        }
+      }))
       .pipe(vfs.dest(config.paths.tmp.css))
       .pipe(RevAll())
       .pipe(revFormat({
@@ -317,7 +375,6 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.css))
       .on('end', () => {
-        fancyLog(chalk.green(`Stylus have been compiled.`))
         cb()
       })
   }
@@ -326,12 +383,21 @@ module.exports = () => {
    * 编译业务层js
    **/
   function handleJs(cb) {
-    fancyLog(chalk.yellow('Compiling javascript with webpack...'))
+    spinner.stop()
+    console.log(chalk.yellow('Building javascript with webpack...'))
     compileJs.dist()
       .then(() => {
         // spinner.stop()
-        fancyLog(chalk.green('Javascript have been compiled.'))
-        cb()
+        let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest.json`)
+        vfs.src(`${config.paths.tmp.appjs}/**/*`)
+          .pipe(RevReplace({
+            manifest: manifest
+          }))
+          .pipe(vfs.dest(config.paths.tmp.appjs))
+          .on('end', () => {
+            spinner.start(chalk.cyan('Starting dist for production...'))
+            cb()
+          })
       })
       .catch((error) => {
         console.log(error)
@@ -407,7 +473,6 @@ module.exports = () => {
           del.sync(delFiles)
 
           if (fileIndex >= config.merge.vendor.js.length) {
-            fancyLog(chalk.green('[custom bower javascript] have been merged.'))
             cb()
           }
         })
@@ -423,7 +488,6 @@ module.exports = () => {
       .pipe(uglify())
       .pipe(vfs.dest(config.paths.tmp.appjs))
       .on('end', () => {
-        fancyLog(chalk.green('[default bower javascript] have been merged.'))
         cb()
       })
   }
@@ -455,7 +519,6 @@ module.exports = () => {
           del.sync(delFiles)
 
           if (fileIndex >= config.merge.vendor.css.length) {
-            fancyLog(chalk.green('[custom bower css] have been merged.'))
             cb()
           }
         })
@@ -476,7 +539,6 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.tmp.css))
       .on("end", () => {
         del.sync(['./tmp/bower'])
-        fancyLog(chalk.green('[default bower css] have been merged.'))
         cb()
       })
   }
@@ -503,7 +565,7 @@ module.exports = () => {
     let fileIndex = 0
 
     for (let [index, elem] of config.merge.common.js.entries()) {
-      vfs.src([`${config.paths.tmp.common}/**/*.js`])
+      vfs.src(`${config.paths.tmp.common}/**/*.js`)
         .pipe(filter(elem.contain))
         .pipe(concatOrder(elem.contain))
         .pipe(concatJs(`common-${index}-browser-${elem.target}`))
@@ -521,7 +583,6 @@ module.exports = () => {
           del.sync(delFiles)
 
           if (fileIndex >= config.merge.common.js.length) {
-            fancyLog(chalk.green('[custom common javascript] have been merged.'))
             cb()
           }
         })
@@ -540,7 +601,6 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.tmp.appjs))
       .on("end", () => {
         del.sync(path.join(config.paths.tmp.common, `**/assign*.js`))
-        fancyLog(chalk.green('[assign common javascript] have been merged.'))
         cb()
       })
   }
@@ -558,7 +618,6 @@ module.exports = () => {
       .pipe(vfs.dest(config.paths.tmp.appjs))
       .on("end", () => {
         del.sync([config.paths.tmp.common])
-        fancyLog(chalk.green('[default common javascript] have been merged.'))
         cb()
       })
   }
@@ -566,9 +625,12 @@ module.exports = () => {
   /**
    * 为bower和common统一添加版本号
    **/
-  function reversionBCJs(cb) {
-
+  function reversionBowerCommonJs(cb) {
+    let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest.json`)
     vfs.src(`${config.paths.tmp.appjs}/**/*.js`)
+      .pipe(RevReplace({
+        manifest: manifest
+      }))
       .pipe(RevAll())
       .pipe(revFormat({
         prefix: '.'
@@ -588,9 +650,23 @@ module.exports = () => {
   /**
    * 为bower和common统一添加版本号
    **/
-  function reversionBCCss(cb) {
-
+  function reversionBowerCommonCss(cb) {
+    let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest.json`)
     vfs.src(`${config.paths.tmp.css}/**/*.css`)
+      .pipe(RevReplace({
+        manifest: manifest
+      }))
+      .pipe(cdnify({
+        base: '',
+        rewriter: (url, process) => {
+          if (/(^(\/)?static)\/(.*?)\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac|woff2?|eot|ttf|otf)/.test(url)) {
+            url = url.replace(/((\/)?static\/)/, '../')
+            return url
+          } else {
+            return process(url)
+          }
+        }
+      }))
       .pipe(RevAll())
       .pipe(revFormat({
         prefix: '.'
@@ -715,15 +791,17 @@ module.exports = () => {
     const indexHtmlFilter = filter('**/index.html', {
       restore: true
     })
-
+    let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest.json`)
     vfs.src(`${config.paths.src.html}/**/*.html`)
       .pipe(indexHtmlFilter)
       .pipe(injectHtml(es))
       .pipe(indexHtmlFilter.restore)
+      .pipe(RevReplace({
+        manifest: manifest
+      }))
       .pipe(vfs.dest(config.paths.tmp.html))
       .on("end", () => {
-        fancyLog(chalk.green('Html have been compiled.'))
-        del(path.join(config.paths.tmp.appjs, 'manifest*.js'))
+        del.sync(`${config.paths.tmp.dir}/**/rev-manifest.json`)
         cb()
       })
   }
@@ -734,7 +812,7 @@ module.exports = () => {
   function cdnReplace(cb) {
     if (!config.useCdn.available) return cb()
 
-    vfs.src([`${config.paths.tmp.dir}/**/*.{${config.useCdn.extFile}}`])
+    vfs.src(`${config.paths.tmp.dir}/**/*.{${config.useCdn.extFile}}`)
       .pipe(cdnify({
         base: config.useCdn.base,
         rewriter: (url, process) => {
@@ -757,7 +835,6 @@ module.exports = () => {
       }))
       .pipe(vfs.dest(config.paths.tmp.dir))
       .on('end', () => {
-        fancyLog(chalk.green('Cdn have been added to all files'))
         cb()
       })
   }
@@ -770,50 +847,6 @@ module.exports = () => {
 
     webp()
       .then(() => {
-        fancyLog(chalk.green('WebP have been compiled.'))
-        cb()
-      })
-  }
-
-  /**
-   * 替换md5后缀的文件名
-   */
-  function reversionRepalce(cb) {
-
-    let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest.json`)
-    vfs.src([`${config.paths.tmp.dir}/**/*`])
-      .pipe(RevReplace({
-        manifest: manifest
-      }))
-      .pipe(vfs.dest(config.paths.tmp.dir))
-      .on('end', () => {
-        fancyLog(chalk.green('Md5 have been added for all files.'))
-        del(`${config.paths.tmp.dir}/**/rev-manifest.json`)
-        cb()
-      })
-  }
-
-  /**
-   * 替换样式中url的相对地址
-   **/
-  function cssReplaceUrl(cb) {
-    const spinner = ora('Replacing address to relative...').start()
-    vfs.src([`${config.paths.tmp.dir}/**/*.css`])
-      .pipe(cdnify({
-        base: '',
-        rewriter: (url, process) => {
-          if (/(^(\/)?static)\/(.*?)\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac|woff2?|eot|ttf|otf)/.test(url)) {
-            url = url.replace(/((\/)?static\/)/, '../')
-            return url
-          } else {
-            return process(url)
-          }
-        }
-      }))
-      .pipe(vfs.dest(config.paths.tmp.dir))
-      .on('end', () => {
-        spinner.stop()
-        fancyLog(chalk.green('All files has been replaced with relative address.'))
         cb()
       })
   }
@@ -821,7 +854,8 @@ module.exports = () => {
   /**
    * 完成编译
    */
-  function compileChanged(cb) {
+  function distComplete(cb) {
+
     //清除 tmp 目录
     const delTmp = () => del([config.paths.tmp.dir])
 
@@ -830,9 +864,10 @@ module.exports = () => {
       })
       .pipe(vfs.dest(config.paths.dist.dir))
       .on('end', () => {
+        spinner.stop()
         delTmp()
         console.log(distReport(config.paths.dist.dir))
-        fancyLog(chalk.magenta(`The ${config.paths.dist.dir} directory is ready to be deployed.`))
+        console.log(chalk.magenta(`The ${config.paths.dist.dir} directory is ready to be deployed.`))
         cb()
       })
   }
@@ -921,10 +956,28 @@ module.exports = () => {
     function(next) {
       async.parallel([
         function(cb) {
-          reversionBCJs(cb)
+          reversionBowerCommonJs(cb)
         },
         function(cb) {
-          reversionBCCss(cb)
+          reversionBowerCommonCss(cb)
+        }
+      ], function(error) {
+        if (error) {
+          throw new Error(error)
+        }
+        next()
+      })
+    },
+    function(next) {
+      async.parallel([
+        function(cb) {
+          handleImages(cb)
+        },
+        function(cb) {
+          handleFonts(cb)
+        },
+        function(cb) {
+          handleCustom(cb)
         }
       ], function(error) {
         if (error) {
@@ -948,13 +1001,7 @@ module.exports = () => {
           compileStylus(cb)
         },
         function(cb) {
-          handleImages(cb)
-        },
-        function(cb) {
-          handleFonts(cb)
-        },
-        function(cb) {
-          handleCustom(cb)
+          handleJs(cb)
         }
       ], function(error) {
         if (error) {
@@ -964,31 +1011,22 @@ module.exports = () => {
       })
     },
     function(next) {
-      handleJs(next)
-    },
-    function(next) {
       compileHtml(next)
-    },
-    function(next) {
-      reversionRepalce(next)
     },
     function(next) {
       compileWebp(next)
     },
     function(next) {
-      cssReplaceUrl(next)
-    },
-    function(next) {
       cdnReplace(next)
     },
     function(next) {
-      compileChanged(next)
+      distComplete(next)
     }
   ], function(err) {
     if (err) {
       throw new Error(err)
     }
     const buildTime = (new Date() - startTime) / 1000 + 's';
-    fancyLog(chalk.green.bold(`Dist completed in ${buildTime}`))
+    console.log(chalk.green.bold(`Dist completed in ${buildTime}`))
   })
 }

@@ -10,10 +10,7 @@ require('babel-register')({
   presets: ['env']
 })
 const path = require('path')
-const proxy = require('http-proxy-middleware')
-const assert = require('assert')
 const fs = require('fs')
-const babel = require("babel-core")
 
 const configFile = path.join(process.cwd(), 'cyb.config.mock.js')
 
