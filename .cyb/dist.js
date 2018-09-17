@@ -791,18 +791,22 @@ module.exports = () => {
     const indexHtmlFilter = filter('**/index.html', {
       restore: true
     })
-    let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest.json`)
     vfs.src(`${config.paths.src.html}/**/*.html`)
       .pipe(indexHtmlFilter)
       .pipe(injectHtml(es))
       .pipe(indexHtmlFilter.restore)
-      .pipe(RevReplace({
-        manifest: manifest
-      }))
       .pipe(vfs.dest(config.paths.tmp.html))
       .on("end", () => {
-        del.sync(`${config.paths.tmp.dir}/**/rev-manifest.json`)
-        cb()
+        let manifest = vfs.src(`${config.paths.tmp.dir}/**/rev-manifest.json`)
+        vfs.src([`${config.paths.tmp.dir}/**/*`])
+          .pipe(RevReplace({
+            manifest: manifest
+          }))
+          .pipe(vfs.dest(config.paths.tmp.dir))
+          .on('end', () => {
+            del.sync(`${config.paths.tmp.dir}/**/rev-manifest.json`)
+            cb()
+          })
       })
   }
 
