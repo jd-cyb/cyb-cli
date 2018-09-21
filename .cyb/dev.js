@@ -570,11 +570,11 @@ module.exports = () => {
       let proxyMiddleware = []
       if (Object.prototype.toString.call(config.proxy) === "[object Array]") {
         for (let item of config.proxy) {
-          let proxyItem = proxy(item.url, item.config)
+          let proxyItem = proxy(item.context, item.options)
           proxyMiddleware.push(proxyItem)
         }
       } else if (Object.prototype.toString.call(config.proxy) === "[object Object]") {
-        let proxyItem = proxy(config.proxy.url, config.proxy.config)
+        let proxyItem = proxy(config.proxy.context, config.proxy.options)
         proxyMiddleware.push(proxyItem)
       }
 
