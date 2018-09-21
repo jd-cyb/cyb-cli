@@ -223,7 +223,7 @@ const webpackConfig = {
           title: `${config.projectName} 编译出错`,
           message: severity + ': ' + error.name,
           subtitle: error.file || '',
-          icon: path.join(__dirname, '../', 'cyb-logo.png')
+          icon: path.join(__dirname, '../', 'cybertron-logo.png')
         });
       }
     })

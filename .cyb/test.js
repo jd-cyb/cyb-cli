@@ -21,6 +21,7 @@ const chalk = require('chalk')
 const config = require('./lib/fezconfig')
 const qrCode = require('./lib/zindex')
 const mockMiddleware = require('./lib/mock-middleware')
+const proxy = require('http-proxy-middleware')
 
 module.exports = () => {
   bs.create('cyb test')
@@ -68,6 +69,16 @@ module.exports = () => {
    * 配置参考：http://www.browsersync.cn/docs/options/
    */
   function startServer(cb) {
+    let proxyMiddleware = []
+    if (Object.prototype.toString.call(config.proxy) === "[object Array]") {
+      for (let item of config.proxy) {
+        let proxyItem = proxy(item.url, item.config)
+        proxyMiddleware.push(proxyItem)
+      }
+    } else if (Object.prototype.toString.call(config.proxy) === "[object Object]") {
+      let proxyItem = proxy(config.proxy.url, config.proxy.config)
+      proxyMiddleware.push(proxyItem)
+    }
     bs.init(Object.assign({
       //在Chrome浏览器中打开网站
       // open: "external",
@@ -77,7 +88,7 @@ module.exports = () => {
       },
       server: {
         baseDir: config.paths.test.dir,
-        middleware: [...(mockMiddleware())]
+        middleware: [...(mockMiddleware()), ...(proxyMiddleware)]
       },
       ui: {
         port: 6700
@@ -107,19 +118,19 @@ module.exports = () => {
   const distDir = fs.existsSync(config.paths.dist.dir)
   if (distDir) {
     async.series([
-      function(next) {
+      function (next) {
         delTest(next)
       },
-      function(next) {
+      function (next) {
         copyDistToTest(next)
       },
-      function(next) {
+      function (next) {
         qrcodeViewHtml(next)
       },
-      function(next) {
+      function (next) {
         startServer(next)
       }
-    ], function(err) {
+    ], function (err) {
       if (err) {
         throw new Error(err);
       }

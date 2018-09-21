@@ -46,6 +46,7 @@ const glob = require('glob')
 const config = require('./lib/fezconfig')
 const zIndex = require('./lib/zindex')
 const compileJs = require('./lib/webpack')
+const proxy = require('http-proxy-middleware')
 
 module.exports = () => {
   console.log(chalk.cyan('Starting dev for development...'))
@@ -566,6 +567,17 @@ module.exports = () => {
      * 配置参考：http://www.browsersync.cn/docs/options/
      */
     const startServer = (webpackCompiled, cb) => {
+      let proxyMiddleware = []
+      if (Object.prototype.toString.call(config.proxy) === "[object Array]") {
+        for (let item of config.proxy) {
+          let proxyItem = proxy(item.url, item.config)
+          proxyMiddleware.push(proxyItem)
+        }
+      } else if (Object.prototype.toString.call(config.proxy) === "[object Object]") {
+        let proxyItem = proxy(config.proxy.url, config.proxy.config)
+        proxyMiddleware.push(proxyItem)
+      }
+
       bs.create('cyb dev')
       bs.init(Object.assign({
         //在Chrome浏览器中打开网站
@@ -589,7 +601,8 @@ module.exports = () => {
               colors: true
             }
           }),
-          webpackHotMiddleware(webpackCompiled.compiler)
+          webpackHotMiddleware(webpackCompiled.compiler),
+          ...(proxyMiddleware)
         ],
         callbacks: {
           ready: function(err, bs) {

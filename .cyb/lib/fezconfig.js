@@ -11,7 +11,10 @@
  * ---------------------------------
  * 每个项目目录中的配置文件会覆盖此文件中的默认配置
  */
-
+require('babel-register')({
+  babelrc: false,
+  presets: ['env']
+})
 const path = require('path')
 const fs = require('fs')
 const _ = require('lodash')
@@ -386,6 +389,11 @@ const fezConfigDefault = {
       }
     }
   },
+
+  /**
+   * proxy转发
+   */
+  proxy: [],
 
   /**
    * -------------------------------
