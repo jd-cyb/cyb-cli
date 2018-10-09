@@ -10,10 +10,9 @@ const webpack = require('webpack')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 const notifier = require('node-notifier')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const babelrc = require('./babelrc')
+const fs = require('fs')
 const config = require('../fezconfig')
 const outputPath = require('./output-path')
-const fs = require('fs')
 
 //是否是生产环境
 const isProduction = process.env.NODE_ENV === 'production'
@@ -45,14 +44,6 @@ const webpackConfig = {
   },
   module: {
     rules: [{
-        test: /\.js$/,
-        exclude: /(node_modules|bower_components)/,
-        use: [{
-          loader: 'babel-loader',
-          options: babelrc
-        }]
-      },
-      {
         test: /\.svg$/,
         exclude: /(node_modules|bower_components)/,
         include: path.resolve(process.cwd(), "src", config.svgSprite.options.publicPath),
@@ -92,7 +83,9 @@ const webpackConfig = {
       {
         test: /\.(scss|sass)$/,
         use: [
-          ...(isProduction ? [MiniCssExtractPlugin.loader] : [{ loader: 'style-loader' }]),
+          ...(isProduction ? [MiniCssExtractPlugin.loader] : [{
+            loader: 'style-loader'
+          }]),
           {
             loader: 'css-loader',
             options: config.webpack.cssLoader.options
@@ -120,7 +113,9 @@ const webpackConfig = {
       {
         test: /\.less$/,
         use: [
-          ...(isProduction ? [MiniCssExtractPlugin.loader] : [{ loader: 'style-loader' }]),
+          ...(isProduction ? [MiniCssExtractPlugin.loader] : [{
+            loader: 'style-loader'
+          }]),
           {
             loader: 'css-loader',
             options: config.webpack.cssLoader.options
@@ -147,7 +142,9 @@ const webpackConfig = {
       {
         test: /\.styl$/,
         use: [
-          ...(isProduction ? [MiniCssExtractPlugin.loader] : [{ loader: 'style-loader' }]),
+          ...(isProduction ? [MiniCssExtractPlugin.loader] : [{
+            loader: 'style-loader'
+          }]),
           {
             loader: 'css-loader',
             options: config.webpack.cssLoader.options
@@ -174,7 +171,9 @@ const webpackConfig = {
       {
         test: /\.css$/,
         use: [
-          ...(isProduction ? [MiniCssExtractPlugin.loader] : [{ loader: 'style-loader' }]),
+          ...(isProduction ? [MiniCssExtractPlugin.loader] : [{
+            loader: 'style-loader'
+          }]),
           {
             loader: 'css-loader',
             options: config.webpack.cssLoader.options
