@@ -188,7 +188,7 @@ yarn global upgrade cyb-cli
 
 官方网站：[http://cyb.hestudy.com/](http://cyb.hestudy.com/)
 
-CYBMOCK：[http://cybmock.hestudy.com/](http://cybmock.hestudy.com/)
+CYBMOCK：[http://cybmock.hestudy.com/](http://cybmock.hestudy.com/)
 
 <h2 align="center">License</h2>
 
