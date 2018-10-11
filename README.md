@@ -182,9 +182,13 @@ npm update -g cyb-cli
 yarn global upgrade cyb-cli
 ```
 
-<h2 align="center">相关说明及使用文档</h2>
+<h2 align="center">资源链接</h2>
 
-使用文档:[http://cyb.hestudy.com/docs/](http://cyb.hestudy.com/docs/)
+使用文档：[http://cyb.hestudy.com/docs/](http://cyb.hestudy.com/docs/)
+
+官方网站：[http://cyb.hestudy.com/](http://cyb.hestudy.com/)
+
+CYBMOCK：[http://cybmock.hestudy.com/](http://cybmock.hestudy.com/)
 
 <h2 align="center">License</h2>
 
