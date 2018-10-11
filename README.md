@@ -15,7 +15,7 @@
   <br>
 </p>
 
-<h1 align="center">塞伯坦CYB</h1>
+<h1 align="center">塞伯坦前端模块化工程构建工具</h1>
 塞伯坦CYB是面向前端模块化工程的构建工具。主要目的是帮助开发者统一前端开发模式和项目开发结构，提高功能扩展和降低维护成本，自动化前端工作流，提高开发效率和开发质量。
 
 <h2 align="center">安装和使用</h2>
@@ -39,13 +39,13 @@
 
 使用npm安装
 
-```bash
+``` bash
 npm install -g cyb-cli
 ```
 
 使用yarn安装
 
-```
+``` bash
 yarn global add cyb-cli
 ```
 
@@ -172,19 +172,19 @@ cyb sftp
 
 - **使用npm升级**
 
-```
+```bash
 npm update -g cyb-cli
 ```
 
 - **使用yarn升级**
 
-```
+```bash
 yarn global upgrade cyb-cli
 ```
 
 <h2 align="center">相关说明及使用文档</h2>
 
-WIKI:[https://github.com/jd-cyb/cyb-cli/wiki](https://github.com/jd-cyb/cyb-cli/wiki)
+使用文档:[http://cyb.hestudy.com/docs/](http://cyb.hestudy.com/docs/)
 
 <h2 align="center">License</h2>
 
