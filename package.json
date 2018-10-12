@@ -1,6 +1,6 @@
 {
   "name": "cyb-cli",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "塞伯坦（Cybertron）- CYB 是面向前端模块化工程的构建工具。主要目的是帮助开发者统一前端开发模式和项目开发结构，提高功能扩展和降低维护成本，自动化前端工作流，提高开发效率和开发质量。",
   "repository": {
     "type": "git",
