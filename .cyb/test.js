@@ -19,7 +19,7 @@ const async = require('async')
 const fancyLog = require('fancy-log')
 const chalk = require('chalk')
 const config = require('./lib/fezconfig')
-const qrCode = require('./lib/zindex')
+const zIndex = require('./lib/zindex')
 const mockMiddleware = require('./lib/mock-middleware')
 const proxy = require('http-proxy-middleware')
 
@@ -41,8 +41,8 @@ module.exports = () => {
   /**
    * 测试环境生成二维码方便在移动端浏览测试
    */
-  function qrcodeViewHtml(cb) {
-    qrCode(config.paths.test.html)
+  function findAllHtml(cb) {
+    zIndex(config.paths.test.html)
       .then(() => {
         fancyLog(chalk.yellow('Find all html files...'))
         cb()
@@ -125,7 +125,7 @@ module.exports = () => {
         copyDistToTest(next)
       },
       function (next) {
-        qrcodeViewHtml(next)
+        findAllHtml(next)
       },
       function (next) {
         startServer(next)

@@ -13,7 +13,6 @@ const config = require('../fezconfig')
 
 module.exports = (applyDir = config.paths.dev.html) => {
   return new Promise((resolve, reject) => {
-
     let htmlPages = [] //所有html页面
 
     /**
@@ -21,15 +20,12 @@ module.exports = (applyDir = config.paths.dev.html) => {
      * http://nodejs.cn/api/fs.html#fs_fs_readdirsync_path_options
      */
     const dirAllFiles = (dir) => {
-      const devPathLen = dir.length //研发目录路径字符长度
-
       const collector = {
         'name': dir,
         'type': 'dir',
         'url': '',
         'child': []
       }
-
       const files = fs.readdirSync(dir) //
 
       files.forEach((file) => {
@@ -40,8 +36,7 @@ module.exports = (applyDir = config.paths.dev.html) => {
          * http://nodejs.cn/api/fs.html#fs_class_fs_stats
          */
         const stats = fs.statSync(absolutePath)
-
-        const url = absolutePath.substring(devPathLen + 1) //截取开发目录路径
+        const url = path.relative(applyDir,absolutePath)
 
         if (stats.isDirectory() && (stats.isDirectory() !== '.' || stats.isDirectory() !== '..')) {
           //如果是目录 继续遍历
@@ -73,17 +68,14 @@ module.exports = (applyDir = config.paths.dev.html) => {
       if (collector['type'] == 'file') {
         if (path.extname(file) === '.html' && basename !== 'zindex.html') {
           let pageItem = {}
-
           pageItem.name = collector['name']
           pageItem.url = collector['url']
           htmlPages.push(pageItem)
-
         }
       }
     }
 
     const ip = localIp.getLocalIP4()
-
     const collector = dirAllFiles(applyDir)
 
     showdir(collector, 0)
@@ -170,7 +162,7 @@ module.exports = (applyDir = config.paths.dev.html) => {
     {{#each this}}
     <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
         <div class="qrcode-img" data-href="{{url}}"></div>
-        <p><a class="btn btn-primary" href="{{url}}" target="_blank">{{name}}</a></p>
+        <p><a class="btn btn-primary" href="{{url}}" target="_blank">{{url}}</a></p>
     </div>
     {{/each}}
 </script>
@@ -223,7 +215,6 @@ module.exports = (applyDir = config.paths.dev.html) => {
     out.write(zindexHtml, (err) => {
       if (err) console.log(err)
     })
-
     out.end()
 
     // 复制目录
