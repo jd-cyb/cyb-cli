@@ -37,7 +37,7 @@ module.exports = {
         webpackGlob().then((webpackGlobData) => {
           let webpackConfig = merge(config.webpack.config, webpackGlobData, require('./config.base'), require('./config.dev'))
           // console.log(JSON.stringify(webpackConfig))
-          glob(path.join(process.cwd(), config.paths.src.appJs, '*/index.js'), (error, files) => {
+          glob(path.join(process.cwd(), config.paths.src.appJs, `*/index${config.entryExt}`), (error, files) => {
             //获取所有JS入口
             files.map((file) => {
               const source_name = path.dirname(file).split('/').pop()
@@ -88,7 +88,7 @@ module.exports = {
             }
           }
 
-          glob(path.join(process.cwd(), config.paths.src.appJs, '*/index.js'), (error, files) => {
+          glob(path.join(process.cwd(), config.paths.src.appJs, `*/index${config.entryExt}`), (error, files) => {
 
             //获取所有js入口
             files.map((file) => {

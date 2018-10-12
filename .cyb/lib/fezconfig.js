@@ -29,6 +29,11 @@ const fezConfigDefault = {
   projectName: process.cwd().split(path.sep).pop(),
 
   /**
+   * 页面入口脚本扩展名，可以改为.ts、.jsx等
+   */
+  entryExt: '.js',
+
+  /**
    * -------------------------------
    * webpack配置
    * -------------------------------
