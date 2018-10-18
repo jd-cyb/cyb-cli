@@ -257,11 +257,11 @@ const fezConfigDefault = {
    * -------------------------------
    */
   sftp: {
-    host: "xxx.xxx.xxx.xxx", // ssh服务器地址
-    port: "22", // ssh服务器端口号,默认是22
-    user: "root", // ssh服务器登录用户名,默认是root
+    host: "", // ssh服务器地址
+    port: "", // ssh服务器端口号,默认是22
+    user: "", // ssh服务器登录用户名
     password: "", // ssh服务器登录密码
-    remotePath: "/var/www/html", // 上传到ssh服务器的目录
+    remotePath: "", // 上传到ssh服务器的目录
     includeHtml: true // 是否包含 html 文件
   },
 
