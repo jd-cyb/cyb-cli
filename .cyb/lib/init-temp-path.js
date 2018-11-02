@@ -38,7 +38,7 @@ const checkVersion = () => {
   return new Promise((resolve, reject) => {
     request({
       url: 'https://registry.npmjs.org/cyb-init-template',
-      timeout: 1000
+      timeout: 10000
     }, (err, res, body) => {
       if (!err && res.statusCode === 200) {
         const latestVersion = JSON.parse(body)['dist-tags'].latest
