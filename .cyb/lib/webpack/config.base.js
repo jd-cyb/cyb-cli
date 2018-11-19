@@ -85,7 +85,7 @@ const webpackConfig = {
         test: /\.(scss|sass)$/,
         use: [
           ...(isProduction ? [MiniCssExtractPlugin.loader] : [{
-            loader: 'style-loader'
+            loader: 'vue-style-loader'
           }]),
           {
             loader: 'css-loader',
@@ -115,7 +115,7 @@ const webpackConfig = {
         test: /\.less$/,
         use: [
           ...(isProduction ? [MiniCssExtractPlugin.loader] : [{
-            loader: 'style-loader'
+            loader: 'vue-style-loader'
           }]),
           {
             loader: 'css-loader',
@@ -144,7 +144,7 @@ const webpackConfig = {
         test: /\.styl$/,
         use: [
           ...(isProduction ? [MiniCssExtractPlugin.loader] : [{
-            loader: 'style-loader'
+            loader: 'vue-style-loader'
           }]),
           {
             loader: 'css-loader',
@@ -173,7 +173,7 @@ const webpackConfig = {
         test: /\.css$/,
         use: [
           ...(isProduction ? [MiniCssExtractPlugin.loader] : [{
-            loader: 'style-loader'
+            loader: 'vue-style-loader'
           }]),
           {
             loader: 'css-loader',
