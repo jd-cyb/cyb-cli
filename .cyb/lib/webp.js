@@ -75,7 +75,7 @@ const gulpWebp = require('gulp-webp')
 const rename = require('gulp-rename')
 const replace = require('gulp-replace')
 const injectString = require('gulp-inject-string')
-const gulp = require('gulp')
+const vfs = require('vinyl-fs')
 const async = require('async')
 
 /**
@@ -132,9 +132,9 @@ module.exports = () => {
     function compileWebpImg(cb) {
       const webpConfig = Object.assign({}, config.useWebp.options)
 
-      gulp.src(`${config.paths.tmp.img}/**/*`)
+      vfs.src(`${config.paths.tmp.img}/**/*`)
         .pipe(gulpWebp(webpConfig))
-        .pipe(gulp.dest(config.paths.tmp.img))
+        .pipe(vfs.dest(config.paths.tmp.img))
         .on('end', () => {
           cb()
         })
@@ -155,7 +155,7 @@ module.exports = () => {
      * 将样式中所有的图片地址替换为webp格式，并复制一份命名为webp.css
      */
     function compileWebpCss(cb) {
-      gulp.src([`${config.paths.tmp.css}/**/*.css`, `!${config.paths.tmp.css}/**/*.webp.css`])
+      vfs.src([`${config.paths.tmp.css}/**/*.css`, `!${config.paths.tmp.css}/**/*.webp.css`])
         .pipe(rename({
           suffix: '.webp'
         }))
@@ -164,7 +164,7 @@ module.exports = () => {
             return match.substring(0, match.lastIndexOf('.')) + '.webp'
           }
         }))
-        .pipe(gulp.dest(config.paths.tmp.css))
+        .pipe(vfs.dest(config.paths.tmp.css))
         .on('end', () => {
           cb()
         })
@@ -174,10 +174,10 @@ module.exports = () => {
      * 将用于检测浏览器是否支持webp的js代码插入到页面
      */
     function injectWebpJs(cb) {
-      gulp.src(`${config.paths.tmp.html}/**/*.html`)
+      vfs.src(`${config.paths.tmp.html}/**/*.html`)
         .pipe(replace(/(link.*?)href/ig, '$1data-href'))
         .pipe(injectString.before('</head>', webpScript))
-        .pipe(gulp.dest(config.paths.tmp.html))
+        .pipe(vfs.dest(config.paths.tmp.html))
         .on('end', () => {
           cb()
         })
