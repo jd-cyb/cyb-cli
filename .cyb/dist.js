@@ -501,7 +501,9 @@ module.exports = () => {
       vfs.src(`./tmp/bower/**/*.css`)
         .pipe(filter(elem.contain))
         .pipe(concatOrder(elem.contain))
-        .pipe(concatCss(`vendor-${index}-bower-${elem.target}`, { rebaseUrls: false }))
+        .pipe(concatCss(`vendor-${index}-bower-${elem.target}`, {
+          rebaseUrls: false
+        }))
         .pipe(gulpif(
           config.useCssMin.available,
           minifyCSS()
@@ -530,7 +532,9 @@ module.exports = () => {
 
     vfs.src('./tmp/bower/**/*.css')
       .pipe(filter('**/*.css'))
-      .pipe(concatCss('vendor-bower.css', { rebaseUrls: false }))
+      .pipe(concatCss('vendor-bower.css', {
+        rebaseUrls: false
+      }))
       .pipe(gulpif(
         config.useCssMin.available,
         minifyCSS()
@@ -800,6 +804,28 @@ module.exports = () => {
   }
 
   /**
+   * 通过 webpack生成的样式中的静态资源替换为相对地址
+   */
+  function webpackCssRelative(cb) {
+    vfs.src(`${config.paths.tmp.css}/*-webpack*.css`)
+      .pipe(cdnify({
+        base: '',
+        rewriter: (url, process) => {
+          if (/(^(\/)?static)\/(.*?)\.(png|jpe?g|gif|svg|mp4|webm|ogg|mp3|wav|flac|aac|woff2?|eot|ttf|otf)/.test(url)) {
+            url = url.replace(/((\/)?static\/)/, '../')
+            return url
+          } else {
+            return process(url)
+          }
+        }
+      }))
+      .pipe(vfs.dest(config.paths.tmp.css))
+      .on('end', () => {
+        cb()
+      })
+  }
+
+  /**
    * CDN 地址替换
    **/
   function cdnReplace(cb) {
@@ -871,151 +897,154 @@ module.exports = () => {
    * parallel 中的任务异步执行
    */
   async.series([
-    function(next) {
+    function (next) {
       delDist(next)
     },
-    function(next) {
+    function (next) {
       async.parallel([
-        function(cb) {
+        function (cb) {
           async.series([
-            function(next) {
+            function (next) {
               copyBowerFiles(next)
             },
-            function(next) {
+            function (next) {
               async.parallel([
-                function(cb) {
+                function (cb) {
                   async.series([
-                    function(next) {
+                    function (next) {
                       bowerCustomJs(next)
                     },
-                    function(next) {
+                    function (next) {
                       bowerVendorJs(next)
                     }
-                  ], function(error) {
+                  ], function (error) {
                     if (error) {
                       throw new Error(error)
                     }
                     cb()
                   })
                 },
-                function(cb) {
+                function (cb) {
                   bowerCustomCss(cb)
                 }
-              ], function(error) {
+              ], function (error) {
                 if (error) {
                   throw new Error(error)
                 }
                 next()
               })
             },
-            function(next) {
+            function (next) {
               bowerVendorCss(next)
             }
-          ], function(error) {
+          ], function (error) {
             if (error) {
               throw new Error(error)
             }
             cb()
           })
         },
-        function(cb) {
+        function (cb) {
           async.series([
-            function(next) {
+            function (next) {
               copyCommonFiles(next)
             },
-            function(next) {
+            function (next) {
               commonCustomJs(next)
             },
-            function(next) {
+            function (next) {
               commonAssignJs(next)
             },
-            function(next) {
+            function (next) {
               commonJs(next)
             }
-          ], function(error) {
+          ], function (error) {
             if (error) {
               throw new Error(error)
             }
             cb()
           })
         }
-      ], function(error) {
+      ], function (error) {
         if (error) {
           throw new Error(error)
         }
         next()
       })
     },
-    function(next) {
+    function (next) {
       async.parallel([
-        function(cb) {
+        function (cb) {
           reversionBowerCommonJs(cb)
         },
-        function(cb) {
+        function (cb) {
           reversionBowerCommonCss(cb)
         }
-      ], function(error) {
+      ], function (error) {
         if (error) {
           throw new Error(error)
         }
         next()
       })
     },
-    function(next) {
+    function (next) {
       async.parallel([
-        function(cb) {
+        function (cb) {
           handleImages(cb)
         },
-        function(cb) {
+        function (cb) {
           handleFonts(cb)
         },
-        function(cb) {
+        function (cb) {
           handleCustom(cb)
         }
-      ], function(error) {
+      ], function (error) {
         if (error) {
           throw new Error(error)
         }
         next()
       })
     },
-    function(next) {
+    function (next) {
       async.parallel([
-        function(cb) {
+        function (cb) {
           compileCss(cb)
         },
-        function(cb) {
+        function (cb) {
           compileLess(cb)
         },
-        function(cb) {
+        function (cb) {
           compileSass(cb)
         },
-        function(cb) {
+        function (cb) {
           compileStylus(cb)
         },
-        function(cb) {
+        function (cb) {
           handleJs(cb)
         }
-      ], function(error) {
+      ], function (error) {
         if (error) {
           throw new Error(error)
         }
         next()
       })
     },
-    function(next) {
+    function (next) {
+      webpackCssRelative(next)
+    },
+    function (next) {
       compileHtml(next)
     },
-    function(next) {
+    function (next) {
       compileWebp(next)
     },
-    function(next) {
+    function (next) {
       cdnReplace(next)
     },
-    function(next) {
+    function (next) {
       distComplete(next)
     }
-  ], function(err) {
+  ], function (err) {
     if (err) {
       throw new Error(err)
     }
