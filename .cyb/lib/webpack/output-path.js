@@ -16,13 +16,13 @@ module.exports = {
     return path.join('static/css/', pathName)
   },
   images(pathName = '') {
-    return path.join('/static/images/', pathName)
+    return path.join('static/images/', pathName)
   },
   fonts(pathName = '') {
-    return path.join('/static/fonts/', pathName)
+    return path.join('static/fonts/', pathName)
   },
   media(pathName = '') {
-    return path.join('/static/media/', pathName)
+    return path.join('static/media/', pathName)
   },
   dev(pathName = '') {
     return path.join(process.cwd(), config.paths.dev.dir)
