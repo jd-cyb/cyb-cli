@@ -695,14 +695,19 @@ module.exports = () => {
     const htmlMinPipe = lazypipe()
       .pipe(() => {
         return usemin({
-          css: [minifyCSS()],
-          html: [() => {
+          css: [minifyCSS(), RevAll(), revFormat({
+            prefix: '.'
+          }), revDel()],
+          html: (config.useHtmlMin.available ? [() => {
             return htmlmin(config.useHtmlMin.options)
-          }],
-          js: [uglify()],
+          }] : []),
+          js: [uglify(), RevAll(), revFormat({
+            prefix: '.'
+          }), revDel()],
           assetsDir: './src/'
         })
       })
+
 
     //合并后的bower文件注入
     const injectVendorFiles = lazypipe()
@@ -767,10 +772,7 @@ module.exports = () => {
             })
           ))
           .pipe(injectManifest())
-          .pipe(gulpif(
-            config.useHtmlMin.available,
-            htmlMinPipe()
-          ))
+          .pipe(htmlMinPipe())
           .pipe(vfs.dest(config.paths.tmp.html))
           .on("end", () => {
             cb()
