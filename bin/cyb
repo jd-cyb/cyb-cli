@@ -4,9 +4,9 @@ const fancyLog = require('fancy-log')
 const chalk = require('chalk')
 const program = require('commander')
 
-console.log("---------------------------------------------")
-console.log(chalk.cyan("* 欢迎使用 塞伯坦CYB 前端模块化工程构建工具 *"))
-console.log("---------------------------------------------")
+console.log("-----------------------------------------")
+console.log(chalk.cyan("* 欢迎使用 塞伯坦前端模块化工程构建工具 *"))
+console.log("-----------------------------------------")
 
 program
   .version(require('../package').version)

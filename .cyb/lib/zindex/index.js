@@ -93,6 +93,9 @@ module.exports = (applyDir = config.paths.dev.html) => {
     <title>${config.projectName} 页面列表</title>
     <link rel="stylesheet" href="./zindex/css/bootstrap.min.css">
     <style>
+    a{
+      color: #333;
+    }
     .marketing {
         text-align: center;
     }
@@ -125,7 +128,7 @@ module.exports = (applyDir = config.paths.dev.html) => {
             </p>
             <p>
                 <a class="btn btn-primary" href="http://cyb.hestudy.com" target="_blank" role="button">官方网站</a>
-                <a class="btn btn-warning" href="https://github.com/jd-cyb/cyb-cli/wiki" target="_blank" role="button">Wiki文档</a>
+                <a class="btn btn-warning" href="http://cyb.hestudy.com/docs/" target="_blank" role="button">Wiki文档</a>
             </p>
         </div>
     </div>
@@ -137,7 +140,7 @@ module.exports = (applyDir = config.paths.dev.html) => {
         <!-- FOOTER -->
         <hr>
         <footer>
-            <p>© 2018 塞伯坦（Cybertron）- CYB前端模块化工程构建工具</p>
+            <p>© 2018 <a href="https://github.com/jd-cyb/cyb-cli" target="_blank">塞伯坦前端模块化工程构建工具</a> - <a href="https://github.com/jd-cyb/" target="_blank">塞伯坦前端架构组</a></p>
         </footer>
     </div>
 
