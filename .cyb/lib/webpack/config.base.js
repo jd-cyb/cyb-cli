@@ -6,19 +6,16 @@
  */
 
 const path = require('path')
-const webpack = require('webpack')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 const notifier = require('node-notifier')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const postcssPxtorem = require('postcss-pxtorem')
-const fs = require('fs')
+
 const config = require('../fezconfig')
 const outputPath = require('./output-path')
+const styleRules = require('./style.rules')
 
 //是否是生产环境
 const isProduction = process.env.NODE_ENV === 'production'
-
-const checkPostcssConfig = fs.existsSync(path.join(process.cwd(), './postcss.config.js'))
 
 const webpackConfig = {
   context: path.join(__dirname, '../../../'),
@@ -81,120 +78,7 @@ const webpackConfig = {
           outputPath: outputPath.fonts()
         }
       },
-      {
-        test: /\.(scss|sass)$/,
-        use: [
-          ...(isProduction ? [MiniCssExtractPlugin.loader] : [{
-            loader: 'vue-style-loader'
-          }]),
-          {
-            loader: 'css-loader',
-            options: config.webpack.cssLoader.options
-          },
-          ...(checkPostcssConfig ? [{
-            loader: 'postcss-loader',
-            options: {
-              sourceMap: true
-            }
-          }] : [{
-            loader: 'postcss-loader',
-            options: {
-              ident: 'postcss',
-              plugins: (loader) => [
-                ...(config.useREM.css.available ? [postcssPxtorem(Object.assign({}, config.useREM.css.options))] : []),
-                require('autoprefixer')(config.autoprefixer.options)
-              ]
-            }
-          }]), {
-            loader: 'sass-loader',
-            options: config.webpack.sassLoader.options
-          }
-        ]
-      },
-      {
-        test: /\.less$/,
-        use: [
-          ...(isProduction ? [MiniCssExtractPlugin.loader] : [{
-            loader: 'vue-style-loader'
-          }]),
-          {
-            loader: 'css-loader',
-            options: config.webpack.cssLoader.options
-          }, ...(checkPostcssConfig ? [{
-            loader: 'postcss-loader',
-            options: {
-              sourceMap: true
-            }
-          }] : [{
-            loader: 'postcss-loader',
-            options: {
-              ident: 'postcss',
-              plugins: (loader) => [
-                ...(config.useREM.css.available ? [postcssPxtorem(Object.assign({}, config.useREM.css.options))] : []),
-                require('autoprefixer')(config.autoprefixer.options)
-              ]
-            }
-          }]), {
-            loader: 'less-loader',
-            options: config.webpack.lessLoader.options
-          }
-        ]
-      },
-      {
-        test: /\.styl$/,
-        use: [
-          ...(isProduction ? [MiniCssExtractPlugin.loader] : [{
-            loader: 'vue-style-loader'
-          }]),
-          {
-            loader: 'css-loader',
-            options: config.webpack.cssLoader.options
-          }, ...(checkPostcssConfig ? [{
-            loader: 'postcss-loader',
-            options: {
-              sourceMap: true
-            }
-          }] : [{
-            loader: 'postcss-loader',
-            options: {
-              ident: 'postcss',
-              plugins: (loader) => [
-                ...(config.useREM.css.available ? [postcssPxtorem(Object.assign({}, config.useREM.css.options))] : []),
-                require('autoprefixer')(config.autoprefixer.options)
-              ]
-            }
-          }]), {
-            loader: 'stylus-loader',
-            options: config.webpack.stylusLoader.options
-          }
-        ]
-      },
-      {
-        test: /\.css$/,
-        use: [
-          ...(isProduction ? [MiniCssExtractPlugin.loader] : [{
-            loader: 'vue-style-loader'
-          }]),
-          {
-            loader: 'css-loader',
-            options: config.webpack.cssLoader.options
-          }, ...(checkPostcssConfig ? [{
-            loader: 'postcss-loader',
-            options: {
-              sourceMap: true
-            }
-          }] : [{
-            loader: 'postcss-loader',
-            options: {
-              ident: 'postcss',
-              plugins: (loader) => [
-                ...(config.useREM.css.available ? [postcssPxtorem(Object.assign({}, config.useREM.css.options))] : []),
-                require('autoprefixer')(config.autoprefixer.options)
-              ]
-            }
-          }])
-        ]
-      }
+      ...styleRules
     ]
   },
   plugins: [
