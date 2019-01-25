@@ -13,9 +13,7 @@
 
 const path = require('path')
 const injectString = require('gulp-inject-string')
-const gulpReplace = require('gulp-replace')
 const fs = require('fs')
-const fancyLog = require('fancy-log')
 const chalk = require('chalk')
 const mainBowerFiles = require('main-bower-files')
 const filter = require('gulp-filter')
@@ -32,7 +30,6 @@ const stylus = require('gulp-stylus')
 const postcss = require('gulp-postcss')
 const autoprefixer = require('autoprefixer')
 const postcssPxtorem = require('postcss-pxtorem')
-const buffer = require('vinyl-buffer')
 const uglify = require('gulp-uglify')
 const htmlmin = require('gulp-htmlmin')
 const usemin = require('gulp-usemin')
@@ -594,22 +591,6 @@ module.exports = () => {
   }
 
   /**
-   * 处理插入到指定页面的脚本
-   **/
-  function commonAssignJs(cb) {
-    if (!fs.existsSync(path.join(process.cwd(), config.paths.src.common))) return cb()
-
-    vfs.src(`${config.paths.tmp.common}/**/assign*.js`)
-      .pipe(flatten())
-      .pipe(uglify())
-      .pipe(vfs.dest(config.paths.tmp.appjs))
-      .on("end", () => {
-        del.sync(path.join(config.paths.tmp.common, `**/assign*.js`))
-        cb()
-      })
-  }
-
-  /**
    * 合并 fez.config.js 中未配置的剩下的所有公共脚本
    **/
   function commonJs(cb) {
@@ -712,7 +693,7 @@ module.exports = () => {
     //合并后的bower文件注入
     const injectVendorFiles = lazypipe()
       .pipe(() => {
-        return inject(vfs.src([`./tmp/static/js/**/vendor*.js`, `./tmp/static/css/**/vendor*.css`, `./tmp/static/js/**/vendor*.css`], {
+        return inject(vfs.src([`./tmp/static/{js,css}/**/vendor*.{js,css}`], {
           read: false
         }), {
           starttag: '<!-- inject:vendor:{{ext}} -->',
@@ -725,7 +706,7 @@ module.exports = () => {
     //公共文件注入
     const injectLibFiles = lazypipe()
       .pipe(() => {
-        return inject(vfs.src([`./tmp/static/css/**/common*.css`, `./tmp/static/js/**/common*.js`, `./tmp/static/js/**/common*.css`, `!./tmp/static/js/**/assign-*.js`], {
+        return inject(vfs.src([`./tmp/static/{js,css}/**/common*.{js,css}`], {
           read: false
         }), {
           starttag: '<!-- inject:common:{{ext}} -->',
@@ -762,7 +743,7 @@ module.exports = () => {
           ))
           .pipe(gulpif(
             config.merge.page,
-            inject(vfs.src([`./tmp/static/js/**/assign*-${cateName}*.js`, `./tmp/**/css/${cateName}.css`, `./tmp/**/css/${cateName}.*.css`, `./tmp/**/css/${cateName}/index.css`, `./tmp/static/js/**/${cateName}.js`, `./tmp/static/js/**/${cateName}.*.js`, `./tmp/**/js/${cateName}.css`], {
+            inject(vfs.src([`./tmp/static/{js,css}/**/${cateName}.{js,css}`, `./tmp/static/{js,css}/**/${cateName}.*.{js,css}`, `./tmp/static/{js,css}/**/${cateName}/index.{js,css}`], {
               read: false
             }), {
               starttag: '<!-- inject:page:{{ext}} -->',
@@ -771,6 +752,35 @@ module.exports = () => {
               quiet: true
             })
           ))
+          .pipe(inject(vfs.src([`./tmp/static/**/{vendor,common}*.{css,js}`, `./tmp/static/fonts/*.{woff2,woff,eot,ttf}`, `./tmp/static/{js,css}/**/${cateName}.{js,css}`, `./tmp/static/{js,css}/**/${cateName}.*.{js,css}`, `./tmp/static/{js,css}/**/${cateName}/index.{js,css}`], {
+            read: false
+          }), {
+            starttag: '<!-- inject:preload:{{ext}} -->',
+            ignorePath: '../../../tmp/',
+            relative: true,
+            quiet: true,
+            transform: function (filepath) {
+              let asVal = '';
+              const fileExt = path.extname(filepath)
+              switch (fileExt) {
+                case '.js':
+                  asVal = 'script';
+                  break;
+                case '.css':
+                  asVal = 'style';
+                  break;
+                case '.woff2':
+                case '.woff2':
+                case '.eot':
+                case '.ttf':
+                  asVal = 'font';
+                  break;
+                default:
+                  asVal = '';
+              }
+              return `<link rel="preload" href="${filepath}" as="${asVal}" crossorigin="anonymous" />`
+            }
+          }))
           .pipe(injectManifest())
           .pipe(htmlMinPipe())
           .pipe(vfs.dest(config.paths.tmp.html))
@@ -953,9 +963,6 @@ module.exports = () => {
             },
             function (next) {
               commonCustomJs(next)
-            },
-            function (next) {
-              commonAssignJs(next)
             },
             function (next) {
               commonJs(next)
