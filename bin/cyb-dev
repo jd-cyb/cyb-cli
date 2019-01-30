@@ -11,7 +11,7 @@ const checkCybConfigFile = fs.existsSync(path.join(process.cwd(), './cyb.config.
 
 if (checkFezConfigFile || checkCybConfigFile) {
   program
-    .description('研发环境')
+    .description('构建研发环境')
     .parse(process.argv)
 
   dev()

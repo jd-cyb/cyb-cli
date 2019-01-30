@@ -8,7 +8,7 @@ const chalk = require('chalk')
 const imagemin = require('../.cyb/imagemin')
 
 program
-  .description('图片深度无损压缩解决方案')
+  .description('图片深度压缩')
   .option('imageName', '图片文件名，压缩多个图片以空格分割')
   .parse(process.argv)
 
