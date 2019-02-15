@@ -22,8 +22,8 @@ module.exports = {
     chunkFilename: path.join(outputPath.js(), '[name].[chunkhash:8].js')
   },
   module: {
-    rules: [{
-      test: /\.js$/,
+    rules: [...(config.useMock.dist ? [{
+      test: /\.(js|jsx|ts)$/,
       exclude: /(node_modules|bower_components)/,
       use: [{
         loader: 'fez-preprocess-loader',
@@ -31,7 +31,7 @@ module.exports = {
           available: !config.useMock.dist
         }
       }]
-    }]
+    }] : [])]
   },
   optimization: {
     runtimeChunk: {
@@ -70,7 +70,9 @@ module.exports = {
     ...(config.webpack.analyzer.available ? [new BundleAnalyzerPlugin(config.webpack.options)] : []),
     new webpack.BannerPlugin('@2018 塞伯坦-CYB前端模块化工程构建工具\nhttps://github.com/jd-cyb/cyb-cli'),
     // 根据模块的相对路径生成一个四位数的hash作为模块id
-    new webpack.HashedModuleIdsPlugin({ hashDigest: 'hex' }),
+    new webpack.HashedModuleIdsPlugin({
+      hashDigest: 'hex'
+    }),
     // enable scope hoisting
     new webpack.optimize.ModuleConcatenationPlugin()
   ]

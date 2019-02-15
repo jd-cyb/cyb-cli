@@ -23,8 +23,8 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin()
   ],
   module: {
-    rules: [{
-      test: /\.js$/,
+    rules: [...(config.useMock.dev ? [{
+      test: /\.(js|jsx|ts)$/,
       exclude: /(node_modules|bower_components)/,
       use: [{
         loader: 'fez-preprocess-loader',
@@ -32,7 +32,7 @@ module.exports = {
           available: !config.useMock.dev
         }
       }]
-    }]
+    }] : [])]
   },
   devtool: 'cheap-module-eval-source-map'
 }
