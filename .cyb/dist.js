@@ -760,7 +760,8 @@ module.exports = () => {
             relative: true,
             quiet: true,
             transform: function (filepath) {
-              let asVal = '';
+              let asVal = ''
+              let crossOrigin = config.useCdn.available
               const fileExt = path.extname(filepath)
               switch (fileExt) {
                 case '.js':
@@ -770,15 +771,16 @@ module.exports = () => {
                   asVal = 'style';
                   break;
                 case '.woff2':
-                case '.woff2':
+                case '.woff':
                 case '.eot':
                 case '.ttf':
                   asVal = 'font';
+                  crossOrigin = true;
                   break;
                 default:
                   asVal = '';
               }
-              return `<link rel="preload" href="${filepath}" as="${asVal}" crossorigin="anonymous" />`
+              return `<link rel="preload" href="${filepath}" as="${asVal}" ${crossOrigin?'crossorigin="anonymous"':''} />`
             }
           }))
           .pipe(injectManifest())
