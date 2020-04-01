@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>使用REM等比适配 | CYB-CLI</title>
+    <meta name="description" content="前端模块化工程构建工具">
+    <link rel="shortcut icon" href="/docs/favicon.ico">
+    
+    <link rel="preload" href="/docs/assets/css/0.styles.0a0cb1d7.css" as="style"><link rel="preload" href="/docs/assets/js/app.9a3bf750.js" as="script"><link rel="preload" href="/docs/assets/js/18.9e1ecd8f.js" as="script"><link rel="prefetch" href="/docs/assets/js/10.fe3d1094.js"><link rel="prefetch" href="/docs/assets/js/11.e700e683.js"><link rel="prefetch" href="/docs/assets/js/12.62a36735.js"><link rel="prefetch" href="/docs/assets/js/13.2c260404.js"><link rel="prefetch" href="/docs/assets/js/14.e5aa4dc3.js"><link rel="prefetch" href="/docs/assets/js/15.70c3b63b.js"><link rel="prefetch" href="/docs/assets/js/16.e91555a3.js"><link rel="prefetch" href="/docs/assets/js/17.ae02dd55.js"><link rel="prefetch" href="/docs/assets/js/19.49c84229.js"><link rel="prefetch" href="/docs/assets/js/2.a58c22f1.js"><link rel="prefetch" href="/docs/assets/js/20.20a31fb6.js"><link rel="prefetch" href="/docs/assets/js/21.daeec7af.js"><link rel="prefetch" href="/docs/assets/js/22.aa1ced7d.js"><link rel="prefetch" href="/docs/assets/js/23.a19a4821.js"><link rel="prefetch" href="/docs/assets/js/24.af6d742e.js"><link rel="prefetch" href="/docs/assets/js/25.8f0aa0e9.js"><link rel="prefetch" href="/docs/assets/js/26.203ed63b.js"><link rel="prefetch" href="/docs/assets/js/27.62a30f58.js"><link rel="prefetch" href="/docs/assets/js/28.886e83a0.js"><link rel="prefetch" href="/docs/assets/js/29.5b93d958.js"><link rel="prefetch" href="/docs/assets/js/3.749b42ad.js"><link rel="prefetch" href="/docs/assets/js/30.30fdf66a.js"><link rel="prefetch" href="/docs/assets/js/31.61fe6062.js"><link rel="prefetch" href="/docs/assets/js/32.97015862.js"><link rel="prefetch" href="/docs/assets/js/4.b93fe715.js"><link rel="prefetch" href="/docs/assets/js/5.38bd3f3a.js"><link rel="prefetch" href="/docs/assets/js/6.42fa5fc3.js"><link rel="prefetch" href="/docs/assets/js/7.20a3aa21.js"><link rel="prefetch" href="/docs/assets/js/8.f5ff8a74.js"><link rel="prefetch" href="/docs/assets/js/9.3091ddbb.js">
+    <link rel="stylesheet" href="/docs/assets/css/0.styles.0a0cb1d7.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/docs/" class="home-link router-link-active"><!----> <span class="site-name">CYB-CLI</span></a> <div class="links" style="max-width:nullpx;"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/docs/introduce/" class="nav-link">介绍</a></div><div class="nav-item"><a href="/docs/guide/" class="nav-link">安装和使用</a></div><div class="nav-item"><a href="/docs/config/" class="nav-link router-link-active">开发及配置</a></div><div class="nav-item"><a href="/docs/extend/" class="nav-link">功能扩展</a></div><div class="nav-item"><a href="http://cyb.hestudy.com" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  官方网站
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div><div class="nav-item"><a href="https://github.com/jd-cyb/cyb-cli" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Github
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <div class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/docs/introduce/" class="nav-link">介绍</a></div><div class="nav-item"><a href="/docs/guide/" class="nav-link">安装和使用</a></div><div class="nav-item"><a href="/docs/config/" class="nav-link router-link-active">开发及配置</a></div><div class="nav-item"><a href="/docs/extend/" class="nav-link">功能扩展</a></div><div class="nav-item"><a href="http://cyb.hestudy.com" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  官方网站
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div><div class="nav-item"><a href="https://github.com/jd-cyb/cyb-cli" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Github
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav>  <ul class="sidebar-links"><li><a href="/docs/config/" class="sidebar-link">开发及配置说明</a></li><li><a href="/docs/config/directory.html" class="sidebar-link">目录结构及HTML模板</a></li><li><a href="/docs/config/css.html" class="sidebar-link">CSS相关</a></li><li><a href="/docs/config/webpack.html" class="sidebar-link">Webpack相关</a></li><li><a href="/docs/config/npm.html" class="sidebar-link">使用NPM部署第三方框架库</a></li><li><a href="/docs/config/bower.html" class="sidebar-link">使用Bower部署第三方框架库</a></li><li><a href="/docs/config/vendor.html" class="sidebar-link">手动部署第三方框架库</a></li><li><a href="/docs/config/common.html" class="sidebar-link">部署项目公共文件</a></li><li><a href="/docs/config/custom.html" class="sidebar-link">部署自定义文件</a></li><li><a href="/docs/config/merge.html" class="sidebar-link">提取、合并公共代码</a></li><li><a href="/docs/config/svg.html" class="sidebar-link">使用SVG高清图标</a></li><li><a href="/docs/config/rem.html" class="active sidebar-link">使用REM等比适配</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/docs/config/rem.html#开始使用" class="sidebar-link">开始使用</a></li><li class="sidebar-sub-header"><a href="/docs/config/rem.html#高级配置" class="sidebar-link">高级配置</a></li></ul></li><li><a href="/docs/config/imagemin.html" class="sidebar-link">使用图片无损压缩</a></li><li><a href="/docs/config/fontmin.html" class="sidebar-link">使用特殊字体</a></li><li><a href="/docs/config/webp.html" class="sidebar-link">使用WebP图片解决方案</a></li><li><a href="/docs/config/cdn.html" class="sidebar-link">全站资源添加CDN地址</a></li><li><a href="/docs/config/sftp.html" class="sidebar-link">使用SFTP部署上线</a></li><li><a href="/docs/config/mock.html" class="sidebar-link">使用本地Mock服务</a></li><li><a href="/docs/config/proxy.html" class="sidebar-link">使用Proxy代理</a></li><li><a href="/docs/config/other.html" class="sidebar-link">其它功能配置</a></li></ul> </div> <div class="page"> <div class="content"><h1 id="使用rem等比适配"><a href="#使用rem等比适配" aria-hidden="true" class="header-anchor">#</a> 使用REM等比适配</h1> <div class="tip custom-block"><p class="custom-block-title">TIP</p> <p>CYB已集成业界先进的移动端REM解决方案，开发人员照常使用<code>px</code>单位书写样式，CYB会将样式中的<code>px</code>单位根据配置自动计算并转换为<code>rem</code>单位。</p></div> <blockquote><p>如果您使用了第三方框架，比如<code>framework7</code>来开发项目，CYB也会自动将第三方框架中的<code>px</code>单位自动计算并转换为<code>rem</code>单位。</p></blockquote> <h2 id="开始使用"><a href="#开始使用" aria-hidden="true" class="header-anchor">#</a> 开始使用</h2> <ul><li>在<code>cyb.config.js</code>中开启<code>useREM</code>配置</li></ul> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// cyb.config.js</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">{</span>
+  useREM<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    css<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      available<span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token comment">//启用 css/less/sass/scss/styl 中的 px =&gt; rem 转换</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><ul><li>在<code>src/static/style</code>样式目录新建公共样式<code>rem.less</code>(或者sass/scss/styl)</li></ul> <div class="language-bash extra-class"><pre class="language-bash"><code>static
+└── styles
+    ├── index.less
+    ├── common.less
+    └── lib
+        └── rem.less
+</code></pre></div><p>以上<code>rem.less</code>内容为：</p> <div class="language-less extra-class"><pre class="language-less"><code><span class="token comment">/* rem.less */</span>
+
+<span class="token comment">// REM 适配</span>
+<span class="token comment">// 375px (iPhone 6) 此为基准值, 与视觉设计稿 `宽度/2` 保持一致</span>
+<span class="token selector">html</span> <span class="token punctuation">{</span>
+    <span class="token property">font-size</span><span class="token punctuation">:</span> 16PX<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token comment">// 13.6533333 = 320*16/375 (iPhone 5)</span>
+<span class="token atrule">@media only screen and <span class="token punctuation">(</span>min-width<span class="token punctuation">:</span> 320px<span class="token punctuation">)</span></span> <span class="token punctuation">{</span>
+    <span class="token selector">html</span> <span class="token punctuation">{</span>
+        <span class="token property">font-size</span><span class="token punctuation">:</span> 13.6533333PX <span class="token important">!important</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token comment">// base root size (iPhone 6)</span>
+<span class="token atrule">@media only screen and <span class="token punctuation">(</span>min-width<span class="token punctuation">:</span> 375px<span class="token punctuation">)</span></span> <span class="token punctuation">{</span>
+    <span class="token selector">html</span> <span class="token punctuation">{</span>
+        <span class="token property">font-size</span><span class="token punctuation">:</span> 16PX <span class="token important">!important</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token comment">// 17.0666667 = 400*16/375 (Most Android)</span>
+<span class="token atrule">@media only screen and <span class="token punctuation">(</span>min-width<span class="token punctuation">:</span> 400px<span class="token punctuation">)</span></span> <span class="token punctuation">{</span>
+    <span class="token selector">html</span> <span class="token punctuation">{</span>
+        <span class="token property">font-size</span><span class="token punctuation">:</span> 17.0666667PX <span class="token important">!important</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token comment">// 17.664 = 414*16/375 (iPhone 6 Plus)</span>
+<span class="token atrule">@media only screen and <span class="token punctuation">(</span>min-width<span class="token punctuation">:</span> 414px<span class="token punctuation">)</span></span> <span class="token punctuation">{</span>
+    <span class="token selector">html</span> <span class="token punctuation">{</span>
+        <span class="token property">font-size</span><span class="token punctuation">:</span> 17.664PX <span class="token important">!important</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token comment">// 20.48 = 480*16/375 (iPad)</span>
+<span class="token atrule">@media only screen and <span class="token punctuation">(</span>min-width<span class="token punctuation">:</span> 480px<span class="token punctuation">)</span></span> <span class="token punctuation">{</span>
+    <span class="token selector">html</span> <span class="token punctuation">{</span>
+        <span class="token property">font-size</span><span class="token punctuation">:</span> 20.48PX <span class="token important">!important</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token comment">// 桌面</span>
+<span class="token atrule">@media only screen and <span class="token punctuation">(</span>min-width<span class="token punctuation">:</span> 768px<span class="token punctuation">)</span></span> <span class="token punctuation">{</span>
+    <span class="token selector">html</span> <span class="token punctuation">{</span>
+        <span class="token property">font-size</span><span class="token punctuation">:</span> 16PX <span class="token important">!important</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+</code></pre></div><blockquote><p>可自行根据实际项目使用高级配置设置基准值，CYB默认使用iphone6屏幕下<code>16px</code>为基准值。</p></blockquote> <ul><li>在项目公共样式引入<code>rem.less</code></li></ul> <div class="language-less extra-class"><pre class="language-less"><code><span class="token comment">/* index.less 或 common.less */</span>
+<span class="token variable">@import</span> <span class="token string">&quot;./lib/rem.less&quot;</span><span class="token punctuation">;</span>
+</code></pre></div><ul><li>发布代码时CYB会将样式中的<code>px</code>转换为<code>rem</code>。</li></ul> <blockquote><p>如果某些样式不需要<code>REM</code>转换，可使用大写的<code>Px</code>或<code>PX</code>，CYB将忽略转换。</p></blockquote> <h2 id="高级配置"><a href="#高级配置" aria-hidden="true" class="header-anchor">#</a> 高级配置</h2> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// cyb.config.js</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">{</span>
+  <span class="token comment">/**
+   * 启用 PX =&gt; REM 自动化转换
+   * 如果启用 REM 转换需要在公共样式中对&lt;html&gt;设置基准值
+   * 通过 media媒体查询 为 &lt;html&gt; 设置不同值 以实现在不同的屏幕中等比缩放
+   */</span>
+  useREM<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    css<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      available<span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token comment">//启用 css/less/sass/scss 中的 px =&gt; rem 转换</span>
+      <span class="token comment">/**
+       * 配置参考：https://github.com/cuth/postcss-pxtorem
+       */</span>
+      options<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        rootValue<span class="token punctuation">:</span> <span class="token number">16</span><span class="token punctuation">,</span> <span class="token comment">//相对于html根字体大小</span>
+        unitPrecision<span class="token punctuation">:</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token comment">//允许REM单位增长到的十进制数</span>
+        propList<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">&quot;*&quot;</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token comment">//可以从px更改为rem的属性</span>
+        selectorBlackList<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token comment">//要忽略的选择器</span>
+        replace<span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token comment">//替换包含rems的规则，而不是添加fallback</span>
+        mediaQuery<span class="token punctuation">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span> <span class="token comment">//允许在媒体查询中转换px</span>
+        minPixelValue<span class="token punctuation">:</span> <span class="token number">0</span> <span class="token comment">//设置要替换的最小像素值</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div></div> <div class="page-edit"><!----> <!----></div> <div class="page-nav"><p class="inner"><span class="prev">
+        ←
+        <a href="/docs/config/svg.html" class="prev">
+          使用SVG高清图标
+        </a></span> <span class="next"><a href="/docs/config/imagemin.html">
+          使用图片无损压缩
+        </a>
+        →
+      </span></p></div> </div> <!----></div></div>
+    <script src="/docs/assets/js/app.9a3bf750.js" defer></script><script src="/docs/assets/js/18.9e1ecd8f.js" defer></script>
+  </body>
+</html>
