@@ -184,11 +184,11 @@ yarn global upgrade cyb-cli
 
 <h2 align="center">资源链接</h2>
 
-使用文档：[https://jd-cyb.github.io/cyb-cli//docs/](https://jd-cyb.github.io/cyb-cli//docs/)
+使用文档：[https://jd-cyb.github.io/cyb-cli/docs/](https://jd-cyb.github.io/cyb-cli/docs/)
 
 官方网站：[https://jd-cyb.github.io/cyb-cli/](https://jd-cyb.github.io/cyb-cli/)
 
-CYBMOCK：[http://cybmock.hestudy.com/](http://cybmock.hestudy.com/)
+CYBMOCK：[https://jd-cyb.github.io/cybmock/](https://jd-cyb.github.io/cybmock/)
 
 <h2 align="center">License</h2>
 
