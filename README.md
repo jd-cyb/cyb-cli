@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://cyb.hestudy.com" target="_blank">
+  <a href="https://jd-cyb.github.io/cyb-cli/" target="_blank">
     <img width="200" src="./.cyb/lib/cyb-logo.png">
   </a>
   <br>
@@ -184,9 +184,9 @@ yarn global upgrade cyb-cli
 
 <h2 align="center">资源链接</h2>
 
-使用文档：[http://cyb.hestudy.com/docs/](http://cyb.hestudy.com/docs/)
+使用文档：[https://jd-cyb.github.io/cyb-cli//docs/](https://jd-cyb.github.io/cyb-cli//docs/)
 
-官方网站：[http://cyb.hestudy.com/](http://cyb.hestudy.com/)
+官方网站：[https://jd-cyb.github.io/cyb-cli/](https://jd-cyb.github.io/cyb-cli/)
 
 CYBMOCK：[http://cybmock.hestudy.com/](http://cybmock.hestudy.com/)
 
