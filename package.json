@@ -87,7 +87,7 @@
     "gulp-webp": "^4.0.1",
     "gulp-zip": "^5.0.1",
     "handlebars": "^4.1.1",
-    "http-proxy-middleware": "^0.20.0",
+    "http-proxy-middleware": "^2.0.7",
     "imagemin-gifsicle": "^6.0.1",
     "imagemin-mozjpeg": "^8.0.0",
     "imagemin-pngquant": "^8.0.0",
