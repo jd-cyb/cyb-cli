@@ -23,6 +23,7 @@
 - Mac系统推荐使用 [iterm2](http://iterm2.com/) 及 [oh my zsh](http://ohmyz.sh/)。
 - 类 Unix 系统，请打开任意终端输入命令执行。
 - Windows 用户请先安装 [git](http://git-scm.com/)，然后在 [Git Bash](http://git-for-windows.github.io/) 下执行命令。
+- [https://github.com/jd-cyb/cyb-cli/wiki](https://github.com/jd-cyb/cyb-cli/wiki)
 
 ### 安装
 
